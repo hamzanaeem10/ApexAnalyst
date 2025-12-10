@@ -43,14 +43,20 @@ async def lifespan(app: FastAPI):
     
     # Configure FastF1 cache
     try:
-        fastf1.Cache.enable_cache(settings.fastf1_cache_dir)
-        logger.info(f"FastF1 cache enabled at: {settings.fastf1_cache_dir}")
+        import os
+        cache_dir = settings.fastf1_cache_dir
+        os.makedirs(cache_dir, exist_ok=True)
+        fastf1.Cache.enable_cache(cache_dir)
+        logger.info(f"FastF1 cache enabled at: {cache_dir}")
     except Exception as e:
         logger.warning(f"Could not enable FastF1 cache: {e}")
     
     # Initialize session manager
-    session_manager = get_session_manager()
-    logger.info("Session manager initialized")
+    try:
+        session_manager = get_session_manager()
+        logger.info("Session manager initialized")
+    except Exception as e:
+        logger.warning(f"Session manager initialization warning: {e}")
     
     logger.info(f"Apex Analyst API v{settings.app_version} started successfully")
     
@@ -60,9 +66,12 @@ async def lifespan(app: FastAPI):
     logger.info("Shutting down Apex Analyst API...")
     
     # Clear session cache
-    session_manager = get_session_manager()
-    session_manager.clear_all_sessions()
-    logger.info("Session cache cleared")
+    try:
+        session_manager = get_session_manager()
+        session_manager.clear_all_sessions()
+        logger.info("Session cache cleared")
+    except Exception as e:
+        logger.warning(f"Could not clear session cache: {e}")
     
     logger.info("Apex Analyst API shutdown complete")
 
