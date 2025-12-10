@@ -22,8 +22,13 @@ class Settings(BaseSettings):
     host: str = "0.0.0.0"
     port: int = 8000
     
-    # CORS
-    cors_origins: list[str] = ["http://localhost:3000", "http://localhost:5173"]
+    # CORS - Allow all origins in production for Vercel deployment
+    cors_origins: list[str] = [
+        "http://localhost:3000", 
+        "http://localhost:5173",
+        "https://*.vercel.app",
+        "https://apexanalyst.vercel.app",
+    ]
     
     # FastF1 Cache
     fastf1_cache_dir: str = Field(default="./cache/fastf1")

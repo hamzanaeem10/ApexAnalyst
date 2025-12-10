@@ -20,9 +20,19 @@ import type {
   RaceDriver,
 } from '../types';
 
+// Determine API base URL based on environment
+const getApiBaseUrl = () => {
+  // In production, use the environment variable or default to relative path
+  if (import.meta.env.VITE_API_URL) {
+    return `${import.meta.env.VITE_API_URL}/api/v1`;
+  }
+  // In development, use the proxy (relative path)
+  return '/api/v1';
+};
+
 // Create axios instance with base configuration
 const api = axios.create({
-  baseURL: '/api/v1',
+  baseURL: getApiBaseUrl(),
   headers: {
     'Content-Type': 'application/json',
   },

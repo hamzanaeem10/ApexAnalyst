@@ -194,6 +194,43 @@ Key settings can be modified in `config/settings.py`:
 
 This project is for educational and analytical purposes. F1 data is provided by FastF1 and Jolpica APIs.
 
+## 🚀 Deployment
+
+### Frontend (Vercel)
+
+1. Push your code to GitHub
+2. Go to [vercel.com](https://vercel.com) and import your repository
+3. Set the **Root Directory** to `frontend`
+4. Add environment variable: `VITE_API_URL` = your backend URL (e.g., `https://apexanalyst-api.railway.app`)
+5. Deploy!
+
+### Backend (Railway)
+
+1. Go to [railway.app](https://railway.app) and create a new project
+2. Connect your GitHub repository
+3. Set the **Root Directory** to `backend`
+4. Railway will auto-detect the Python app
+5. Add environment variables if needed:
+   - `DEBUG=false`
+   - `CORS_ORIGINS=https://your-app.vercel.app`
+6. Deploy!
+
+### Alternative: Backend on Render
+
+1. Go to [render.com](https://render.com) and create a new Web Service
+2. Connect your GitHub repository
+3. Set:
+   - **Root Directory**: `backend`
+   - **Build Command**: `pip install -r requirements.txt`
+   - **Start Command**: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+4. Deploy!
+
+### Post-Deployment
+
+1. Copy your backend URL (e.g., `https://apexanalyst-api.railway.app`)
+2. Update `frontend/vercel.json` with the backend URL in the rewrites section
+3. Or set `VITE_API_URL` environment variable in Vercel dashboard
+
 ## 🙏 Acknowledgments
 
 - [FastF1](https://github.com/theOehrly/Fast-F1) - F1 telemetry data

@@ -94,10 +94,10 @@ app = FastAPI(
     openapi_url="/openapi.json"
 )
 
-# Configure CORS
+# Configure CORS - More permissive for production
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.cors_origins,
+    allow_origins=["*"],  # Allow all origins for API access
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
