@@ -10,22 +10,31 @@ interface StatCardProps {
   color?: 'red' | 'green' | 'blue' | 'yellow' | 'purple' | 'default';
 }
 
-const colorClasses = {
-  red: 'from-f1-red/20 to-transparent border-f1-red/30',
-  green: 'from-green-500/20 to-transparent border-green-500/30',
-  blue: 'from-blue-500/20 to-transparent border-blue-500/30',
-  yellow: 'from-yellow-500/20 to-transparent border-yellow-500/30',
-  purple: 'from-purple-500/20 to-transparent border-purple-500/30',
-  default: 'from-f1-gray/20 to-transparent border-f1-gray/30',
+const gradientClasses = {
+  red: 'from-red-500 to-red-600',
+  green: 'from-emerald-500 to-emerald-600',
+  blue: 'from-blue-500 to-cyan-600',
+  yellow: 'from-amber-500 to-yellow-600',
+  purple: 'from-purple-500 to-pink-600',
+  default: 'from-gray-500 to-gray-600',
 };
 
-const iconColorClasses = {
-  red: 'text-f1-red',
-  green: 'text-green-500',
-  blue: 'text-blue-500',
-  yellow: 'text-yellow-500',
-  purple: 'text-purple-500',
-  default: 'text-gray-400',
+const bgGradientClasses = {
+  red: 'from-red-500/10 via-transparent to-transparent',
+  green: 'from-emerald-500/10 via-transparent to-transparent',
+  blue: 'from-blue-500/10 via-transparent to-transparent',
+  yellow: 'from-amber-500/10 via-transparent to-transparent',
+  purple: 'from-purple-500/10 via-transparent to-transparent',
+  default: 'from-gray-500/10 via-transparent to-transparent',
+};
+
+const glowClasses = {
+  red: 'shadow-red-500/20',
+  green: 'shadow-emerald-500/20',
+  blue: 'shadow-blue-500/20',
+  yellow: 'shadow-amber-500/20',
+  purple: 'shadow-purple-500/20',
+  default: 'shadow-gray-500/20',
 };
 
 export default function StatCard({
@@ -38,33 +47,44 @@ export default function StatCard({
   color = 'default',
 }: StatCardProps) {
   const trendIcon = trend === 'up' ? '↑' : trend === 'down' ? '↓' : '';
-  const trendClass = trend === 'up' ? 'text-green-500' : trend === 'down' ? 'text-red-500' : 'text-gray-400';
+  const trendClass = trend === 'up' ? 'text-emerald-400' : trend === 'down' ? 'text-red-400' : 'text-gray-400';
   
   return (
-    <div className={`stat-card apex-card p-6 bg-gradient-to-br ${colorClasses[color]}`}>
-      <div className="flex items-start justify-between">
-        <div className="flex-1">
-          <p className="text-sm font-medium text-gray-400 uppercase tracking-wider">
-            {title}
-          </p>
-          <p className="text-3xl font-bold mt-2 text-white font-mono">
-            {value}
-          </p>
-          {subtitle && (
-            <p className="text-sm text-gray-500 mt-1">{subtitle}</p>
-          )}
-          {trend && trendValue && (
-            <p className={`text-sm mt-2 ${trendClass}`}>
-              {trendIcon} {trendValue}
+    <div className="stat-card apex-card group relative overflow-hidden">
+      {/* Background gradient */}
+      <div className={`absolute inset-0 bg-gradient-to-br ${bgGradientClasses[color]} opacity-50`} />
+      
+      {/* Content */}
+      <div className="relative z-10 p-6">
+        <div className="flex items-start justify-between">
+          <div className="flex-1 space-y-3">
+            <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">
+              {title}
             </p>
+            <p className="text-3xl font-black text-white tracking-tight">
+              {value}
+            </p>
+            {subtitle && (
+              <p className="text-sm text-gray-400 font-medium">{subtitle}</p>
+            )}
+            {trend && trendValue && (
+              <p className={`text-sm font-bold ${trendClass} flex items-center gap-1`}>
+                <span>{trendIcon}</span>
+                <span>{trendValue}</span>
+              </p>
+            )}
+          </div>
+          
+          {Icon && (
+            <div className={`p-3 rounded-xl bg-gradient-to-br ${gradientClasses[color]} shadow-lg ${glowClasses[color]} group-hover:scale-110 transition-transform duration-300`}>
+              <Icon className="w-6 h-6 text-white" />
+            </div>
           )}
         </div>
-        {Icon && (
-          <div className={`p-3 rounded-lg bg-f1-dark/50 ${iconColorClasses[color]}`}>
-            <Icon className="w-6 h-6" />
-          </div>
-        )}
       </div>
+
+      {/* Bottom accent line */}
+      <div className={`absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r ${gradientClasses[color]} opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
     </div>
   );
 }

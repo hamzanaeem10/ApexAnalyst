@@ -2,12 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
 :root {
   --f1-red: #E10600;
-  --f1-black: #15151E;
-  --f1-dark: #1E1E2E;
-  --f1-gray: #38383F;
+  --f1-red-glow: rgba(225, 6, 0, 0.4);
+  --f1-black: #0D0D12;
+  --f1-dark: #151520;
+  --f1-darker: #0A0A0F;
+  --f1-gray: #2A2A35;
   --f1-light: #F5F5F5;
+  --f1-accent: #FF1E1E;
+  --glass-bg: rgba(21, 21, 32, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.08);
 }
 
 * {
@@ -16,30 +23,71 @@
   box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
-  font-family: 'Titillium Web', sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   background-color: var(--f1-black);
   color: var(--f1-light);
   min-height: 100vh;
+  background-image: 
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(225, 6, 0, 0.15), transparent),
+    radial-gradient(ellipse 60% 40% at 100% 100%, rgba(225, 6, 0, 0.08), transparent);
+  background-attachment: fixed;
 }
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--f1-dark);
+  background: var(--f1-darker);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--f1-gray);
-  border-radius: 4px;
+  background: linear-gradient(180deg, var(--f1-gray) 0%, #1f1f2a 100%);
+  border-radius: 5px;
+  border: 2px solid var(--f1-darker);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--f1-red);
+  background: linear-gradient(180deg, var(--f1-red) 0%, #b30500 100%);
+}
+
+/* Modern glass card */
+.apex-card {
+  @apply relative rounded-2xl overflow-hidden;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 
+    0 4px 30px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.apex-card:hover {
+  border-color: rgba(225, 6, 0, 0.3);
+  box-shadow: 
+    0 8px 40px rgba(0, 0, 0, 0.4),
+    0 0 60px rgba(225, 6, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+.apex-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
 }
 
 /* Data table styling */
@@ -48,82 +96,141 @@ body {
 }
 
 .apex-table th {
-  @apply px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider;
-  @apply bg-f1-dark text-f1-light border-b border-f1-gray;
+  @apply px-5 py-4 text-left text-xs font-bold uppercase tracking-widest;
+  background: linear-gradient(180deg, rgba(42, 42, 53, 0.8) 0%, rgba(21, 21, 32, 0.8) 100%);
+  color: rgba(255, 255, 255, 0.7);
+  border-bottom: 2px solid var(--f1-red);
 }
 
 .apex-table td {
-  @apply px-4 py-3 text-sm;
-  @apply border-b border-f1-gray/30;
+  @apply px-5 py-4 text-sm;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.apex-table tbody tr {
+  @apply transition-all duration-200;
 }
 
 .apex-table tbody tr:hover {
-  @apply bg-f1-gray/20;
-}
-
-/* Card component */
-.apex-card {
-  @apply bg-f1-dark rounded-xl border border-f1-gray/30;
-  @apply shadow-lg backdrop-blur-sm;
+  background: linear-gradient(90deg, rgba(225, 6, 0, 0.1), transparent);
 }
 
 /* Button styles */
 .apex-btn {
-  @apply px-6 py-2.5 rounded-lg font-semibold;
-  @apply transition-all duration-200 ease-in-out;
+  @apply relative px-7 py-3 rounded-xl font-bold text-sm uppercase tracking-wider;
+  @apply transition-all duration-300 ease-out;
   @apply focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-f1-black;
+  overflow: hidden;
+}
+
+.apex-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.apex-btn:hover::before {
+  left: 100%;
 }
 
 .apex-btn-primary {
-  @apply bg-f1-red text-white hover:bg-red-600;
-  @apply focus:ring-f1-red;
+  background: linear-gradient(135deg, #E10600 0%, #b30500 100%);
+  @apply text-white;
+  box-shadow: 0 4px 20px rgba(225, 6, 0, 0.4);
+}
+
+.apex-btn-primary:hover {
+  background: linear-gradient(135deg, #ff1a1a 0%, #E10600 100%);
+  box-shadow: 0 6px 30px rgba(225, 6, 0, 0.6);
+  transform: translateY(-2px);
+}
+
+.apex-btn-primary:active {
+  transform: translateY(0);
 }
 
 .apex-btn-secondary {
-  @apply bg-f1-gray text-f1-light hover:bg-gray-600;
-  @apply focus:ring-f1-gray;
+  background: linear-gradient(135deg, rgba(42, 42, 53, 0.8) 0%, rgba(30, 30, 40, 0.8) 100%);
+  @apply text-white;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.apex-btn-secondary:hover {
+  background: linear-gradient(135deg, rgba(52, 52, 63, 0.9) 0%, rgba(40, 40, 50, 0.9) 100%);
+  border-color: rgba(225, 6, 0, 0.5);
 }
 
 /* Input styles */
 .apex-input {
-  @apply w-full px-4 py-2.5 rounded-lg;
-  @apply bg-f1-dark border border-f1-gray/50;
-  @apply text-f1-light placeholder-gray-500;
-  @apply focus:outline-none focus:border-f1-red focus:ring-1 focus:ring-f1-red;
-  @apply transition-all duration-200;
+  @apply w-full px-5 py-3 rounded-xl;
+  background: rgba(21, 21, 32, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  @apply text-white placeholder-gray-500;
+  @apply transition-all duration-300;
+}
+
+.apex-input:focus {
+  @apply outline-none;
+  border-color: var(--f1-red);
+  box-shadow: 0 0 20px rgba(225, 6, 0, 0.2);
 }
 
 .apex-select {
   @apply apex-input cursor-pointer;
-  @apply appearance-none bg-no-repeat bg-right pr-10;
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-  background-position: right 0.5rem center;
-  background-size: 1.5em 1.5em;
+  @apply appearance-none bg-no-repeat pr-12;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23E10600' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 1rem center;
+  background-size: 1.25em 1.25em;
 }
 
-/* Stat card glow effect */
+.apex-select option {
+  background: var(--f1-dark);
+  color: white;
+  padding: 12px;
+}
+
+/* Stat card with glow effect */
 .stat-card {
   @apply relative overflow-hidden;
 }
 
-.stat-card::before {
+.stat-card::after {
   content: '';
-  @apply absolute inset-0 opacity-0 transition-opacity duration-300;
-  background: radial-gradient(circle at center, var(--f1-red) 0%, transparent 70%);
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--f1-red), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
-.stat-card:hover::before {
-  @apply opacity-10;
+.stat-card:hover::after {
+  opacity: 1;
 }
 
 /* Loading spinner */
 .apex-spinner {
-  @apply animate-spin rounded-full border-4 border-f1-gray border-t-f1-red;
+  @apply rounded-full;
+  border: 3px solid rgba(225, 6, 0, 0.2);
+  border-top-color: var(--f1-red);
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 /* Plotly chart container */
 .plotly-chart-container {
-  @apply w-full rounded-lg overflow-hidden;
+  @apply w-full rounded-xl overflow-hidden;
+  background: rgba(21, 21, 32, 0.5);
 }
 
 .plotly-chart-container .js-plotly-plot {
@@ -132,53 +239,79 @@ body {
 
 /* Tyre compound badges */
 .tyre-badge {
-  @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold;
+  @apply inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
 
 .tyre-soft {
-  @apply bg-tyre-soft/20 text-tyre-soft border border-tyre-soft/50;
+  background: linear-gradient(135deg, rgba(255, 0, 0, 0.25) 0%, rgba(255, 0, 0, 0.1) 100%);
+  @apply text-tyre-soft border border-tyre-soft/50;
 }
 
 .tyre-medium {
-  @apply bg-tyre-medium/20 text-tyre-medium border border-tyre-medium/50;
+  background: linear-gradient(135deg, rgba(255, 195, 0, 0.25) 0%, rgba(255, 195, 0, 0.1) 100%);
+  @apply text-tyre-medium border border-tyre-medium/50;
 }
 
 .tyre-hard {
-  @apply bg-white/10 text-white border border-white/50;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%);
+  @apply text-white border border-white/30;
 }
 
 .tyre-intermediate {
-  @apply bg-tyre-intermediate/20 text-tyre-intermediate border border-tyre-intermediate/50;
+  background: linear-gradient(135deg, rgba(57, 181, 74, 0.25) 0%, rgba(57, 181, 74, 0.1) 100%);
+  @apply text-tyre-intermediate border border-tyre-intermediate/50;
 }
 
 .tyre-wet {
-  @apply bg-tyre-wet/20 text-tyre-wet border border-tyre-wet/50;
+  background: linear-gradient(135deg, rgba(0, 174, 239, 0.25) 0%, rgba(0, 174, 239, 0.1) 100%);
+  @apply text-tyre-wet border border-tyre-wet/50;
 }
 
-/* Navigation active state */
+/* Navigation styles */
 .nav-link {
-  @apply relative px-4 py-2 text-gray-400 hover:text-white transition-colors;
+  @apply relative px-4 py-2.5 rounded-lg text-gray-400 font-medium;
+  @apply transition-all duration-300 ease-out;
+}
+
+.nav-link:hover {
+  @apply text-white;
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .nav-link.active {
   @apply text-white;
+  background: linear-gradient(135deg, rgba(225, 6, 0, 0.2) 0%, rgba(225, 6, 0, 0.05) 100%);
 }
 
-.nav-link.active::after {
+.nav-link.active::before {
   content: '';
-  @apply absolute bottom-0 left-0 right-0 h-0.5 bg-f1-red rounded-full;
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 60%;
+  background: var(--f1-red);
+  border-radius: 0 2px 2px 0;
 }
 
-/* Page transitions */
-.page-enter {
-  @apply opacity-0 translate-y-4;
+/* Hero text gradient */
+.text-gradient {
+  background: linear-gradient(135deg, #E10600 0%, #ff4040 50%, #E10600 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradient-shift 3s ease infinite;
 }
 
-.page-enter-active {
-  @apply opacity-100 translate-y-0 transition-all duration-300;
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% center; }
+  50% { background-position: 100% center; }
 }
 
-/* Responsive grid for dashboard */
+/* Dashboard grid */
 .dashboard-grid {
   @apply grid gap-6;
   @apply grid-cols-1 md:grid-cols-2 lg:grid-cols-4;
@@ -187,4 +320,99 @@ body {
 .chart-grid {
   @apply grid gap-6;
   @apply grid-cols-1 lg:grid-cols-2;
+}
+
+/* Module card hover effect */
+.module-card {
+  @apply relative overflow-hidden;
+}
+
+.module-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, transparent 0%, rgba(225, 6, 0, 0.05) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.module-card:hover::before {
+  opacity: 1;
+}
+
+/* Badge styles */
+.apex-badge {
+  @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider;
+  background: linear-gradient(135deg, rgba(225, 6, 0, 0.2) 0%, rgba(225, 6, 0, 0.1) 100%);
+  border: 1px solid rgba(225, 6, 0, 0.3);
+  color: #ff6b6b;
+}
+
+/* Animated background pattern */
+.bg-pattern {
+  background-image: 
+    linear-gradient(rgba(225, 6, 0, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(225, 6, 0, 0.03) 1px, transparent 1px);
+  background-size: 50px 50px;
+}
+
+/* Page section */
+.page-section {
+  @apply mb-10;
+}
+
+.section-title {
+  @apply text-2xl font-bold mb-6 flex items-center gap-3;
+}
+
+.section-title::before {
+  content: '';
+  width: 4px;
+  height: 28px;
+  background: linear-gradient(180deg, var(--f1-red) 0%, transparent 100%);
+  border-radius: 2px;
+}
+
+/* Pulse animation for live elements */
+.pulse-live {
+  animation: pulse-live 2s ease-in-out infinite;
+}
+
+@keyframes pulse-live {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Status indicators */
+.status-dot {
+  @apply w-2 h-2 rounded-full;
+}
+
+.status-dot.success {
+  @apply bg-green-500;
+  box-shadow: 0 0 10px rgba(34, 197, 94, 0.5);
+}
+
+.status-dot.error {
+  @apply bg-red-500;
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+}
+
+.status-dot.loading {
+  @apply bg-yellow-500;
+  animation: pulse 1s ease-in-out infinite;
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+  .apex-card {
+    @apply rounded-xl;
+  }
+  
+  .apex-btn {
+    @apply px-5 py-2.5 text-xs;
+  }
 }
