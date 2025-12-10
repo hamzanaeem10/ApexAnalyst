@@ -1,4 +1,4 @@
-import { Activity, Timer, Cloud, Target, Layers, ArrowRight, TrendingUp, Flag, Users, Zap, Gauge, Radio, Wind, Thermometer, Droplets, Map } from 'lucide-react';
+import { Activity, Timer, Cloud, Target, Layers, ArrowRight, TrendingUp, Flag, Users, Zap, Gauge, Radio, Map } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import SessionSelector from '../components/session/SessionSelector';
 import { useCurrentSession } from '../store/sessionStore';

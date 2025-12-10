@@ -1,6 +1,5 @@
 import { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { MeshTransmissionMaterial } from '@react-three/drei';
 import * as THREE from 'three';
 
 export function F1CarModel(props: any) {
@@ -12,15 +11,6 @@ export function F1CarModel(props: any) {
       group.current.rotation.y = Math.sin(state.clock.getElapsedTime() * 0.5) * 0.2 + Math.PI / 1.2;
     }
   });
-
-  const materialProps = {
-    thickness: 0.2,
-    roughness: 0,
-    transmission: 1,
-    ior: 1.5,
-    chromaticAberration: 0.02,
-    backside: true,
-  };
 
   const bodyColor = "#E10600"; // Ferrari Red
   const detailColor = "#151520"; // Dark

@@ -1,12 +1,9 @@
 [build]
-builder = "paketobuildpacks/builder:base"
+builder = "nixpacks"
 
-[[services]]
-name = "web"
-
-[services.env]
-PORT = "8000"
-
-[[services.ports]]
-port = 8000
-handlers = ["http"]
+[deploy]
+startCommand = "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"
+healthcheckPath = "/"
+healthcheckTimeout = 300
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 3

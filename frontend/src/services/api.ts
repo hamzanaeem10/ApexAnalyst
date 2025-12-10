@@ -67,6 +67,8 @@ export interface SessionStatus {
   state: 'pending' | 'loading_basic' | 'loading_laps' | 'loading_telemetry' | 'ready' | 'error';
   full_telemetry_loaded: boolean;
   loaded_at: string | null;
+  message?: string;
+  progress?: number;
 }
 
 export const sessionApi = {

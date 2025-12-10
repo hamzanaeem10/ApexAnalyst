@@ -3,7 +3,7 @@ import { useSchedule, useLoadSession } from '../../hooks/useApi';
 import { useCurrentSession, useSessionLoading, useSessionError } from '../../store/sessionStore';
 import { getAvailableSeasons, sessionTypeNames } from '../../utils/helpers';
 import { sessionApi, type SessionStatus } from '../../services/api';
-import { Loader2, Calendar, Flag, MapPin, AlertCircle, CheckCircle2, Database, ChevronDown, Sparkles, Zap, Trophy, Timer } from 'lucide-react';
+import { Loader2, Calendar, MapPin, AlertCircle, Database, ChevronDown, Zap, Trophy, Timer } from 'lucide-react';
 import type { SessionLoadRequest } from '../../types';
 
 interface SessionSelectorProps {
@@ -248,10 +248,10 @@ export default function SessionSelector({ onSessionLoaded }: SessionSelectorProp
           </div>
         )}
 
-        {loadingStatus && (
+        {loadingStatus && loadingStatus.progress !== undefined && (
           <div className="mt-4 space-y-2">
             <div className="flex items-center justify-between text-xs">
-              <span className="text-gray-400">{loadingStatus.message}</span>
+              <span className="text-gray-400">{loadingStatus.message || 'Loading...'}</span>
               <span className="text-f1-red font-mono">{Math.round(loadingStatus.progress)}%</span>
             </div>
             <div className="h-1 bg-gray-800 rounded-full overflow-hidden">
