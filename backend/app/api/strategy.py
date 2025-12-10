@@ -45,7 +45,7 @@ async def analyze_historical_strategy(request: HistoricalStrategyRequest):
 
 
 @router.get("/races/{year}")
-async def get_races_for_year(year: int = Path(..., ge=2010, le=2025)):
+async def get_races_for_year(year: int = Path(..., ge=1950, le=2025)):
     """Get list of races for a given year"""
     try:
         races = historical_strategy_service.get_races(year)

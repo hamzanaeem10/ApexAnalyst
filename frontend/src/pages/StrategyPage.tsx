@@ -1,23 +1,66 @@
 import { useState, useMemo } from 'react';
-import { Target, TrendingUp, Clock, Trophy } from 'lucide-react';
-import { useHistoricalStrategy, useRaces } from '../hooks/useApi';
+import { Target, TrendingUp, Clock, Trophy, Zap, AlertTriangle, Fuel } from 'lucide-react';
+import { 
+  useHistoricalStrategy, 
+  useRaces, 
+  useTyreDegradation, 
+  usePitWindow,
+  usePositionChanges,
+  useFuelEffect,
+  useSafetyCarProbability,
+  useDRSTrains
+} from '../hooks/useApi';
+import { useCurrentSession } from '../store/sessionStore';
 import ApexDataTable from '../components/tables/ApexDataTable';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import ErrorDisplay from '../components/common/ErrorDisplay';
 import StatCard from '../components/common/StatCard';
-import { getAvailableSeasons } from '../utils/helpers';
+import SessionSelector from '../components/session/SessionSelector';
+import TyreDegradationChart from '../components/charts/TyreDegradationChart';
+import PitWindowChart from '../components/charts/PitWindowChart';
+import PositionChart from '../components/charts/PositionChart';
+import FuelEffectChart from '../components/charts/FuelEffectChart';
+import SafetyCarCard from '../components/charts/SafetyCarCard';
+import DRSTrainChart from '../components/charts/DRSTrainChart';
+import WhatIfSimulator from '../components/charts/WhatIfSimulator';
+import { getHistoricalSeasons } from '../utils/helpers';
 import type { HistoricalStrategyRequest, StrategyEntry, PitStopData, StrategyEfficiency, RaceInfo } from '../types';
 import type { ColumnDef } from '@tanstack/react-table';
 
 export default function StrategyPage() {
-  const seasons = useMemo(() => getAvailableSeasons(), []);
+  // Historical seasons (1950+) for Jolpica API - used for historical strategy analysis
+  const historicalSeasons = useMemo(() => getHistoricalSeasons(), []);
+  const currentSession = useCurrentSession();
   
-  const [selectedYear, setSelectedYear] = useState(seasons[0]);
+  const [selectedYear, setSelectedYear] = useState(historicalSeasons[0]);
   const [selectedRound, setSelectedRound] = useState<number>(0);
   const [shouldFetch, setShouldFetch] = useState(false);
+  const [activeTab, setActiveTab] = useState<'historical' | 'live'>('live');
+  const [selectedDriver, setSelectedDriver] = useState<string>('');
 
-  // Get races for selected year
+  // Get races for selected year (for historical analysis)
   const { data: racesData, isLoading: racesLoading } = useRaces(selectedYear);
+
+  // Live session analysis hooks
+  const { data: tyreDegradation, isLoading: tyreLoading } = useTyreDegradation(
+    activeTab === 'live' ? currentSession?.session_id : undefined
+  );
+  const { data: pitWindow, isLoading: pitWindowLoading } = usePitWindow(
+    activeTab === 'live' && selectedDriver ? currentSession?.session_id : undefined,
+    selectedDriver
+  );
+  const { data: positionChanges, isLoading: positionLoading } = usePositionChanges(
+    activeTab === 'live' ? currentSession?.session_id : undefined
+  );
+  const { data: fuelEffect, isLoading: fuelLoading } = useFuelEffect(
+    activeTab === 'live' ? currentSession?.session_id : undefined
+  );
+  const { data: safetyCar, isLoading: safetyCarLoading } = useSafetyCarProbability(
+    activeTab === 'live' ? currentSession?.session_id : undefined
+  );
+  const { data: drsTrains, isLoading: drsLoading } = useDRSTrains(
+    activeTab === 'live' ? currentSession?.session_id : undefined
+  );
 
   // Build request only when user clicks Analyze
   const strategyRequest: HistoricalStrategyRequest | null = useMemo(() => {
@@ -196,19 +239,191 @@ export default function StrategyPage() {
     setShouldFetch(false);
   };
 
+  // Get available drivers for pit window analysis
+  const availableDrivers = useMemo(() => {
+    if (!tyreDegradation?.degradation_curves) return [];
+    const drivers = new Set<string>();
+    Object.values(tyreDegradation.degradation_curves).forEach(curve => {
+      curve.raw_data?.forEach(d => drivers.add(d.driver));
+    });
+    return Array.from(drivers);
+  }, [tyreDegradation]);
+
+  // Live strategy loading state
+  const liveLoading = tyreLoading || positionLoading || fuelLoading || safetyCarLoading || drsLoading;
+
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex items-center gap-3">
-        <Target className="w-8 h-8 text-f1-red" />
-        <div>
-          <h1 className="text-2xl font-bold">Historical Strategy Analysis</h1>
-          <p className="text-gray-400 text-sm">
-            Analyze pit stop strategies and efficiency across different races
-          </p>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <Target className="w-8 h-8 text-f1-red" />
+          <div>
+            <h1 className="text-2xl font-bold">Strategy Analysis</h1>
+            <p className="text-gray-400 text-sm">
+              {activeTab === 'live' ? 'Real-time session strategy analysis' : 'Historical strategy comparison'}
+            </p>
+          </div>
+        </div>
+        
+        {/* Tab Switcher */}
+        <div className="flex gap-2">
+          <button
+            onClick={() => setActiveTab('live')}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              activeTab === 'live' 
+                ? 'bg-f1-red text-white' 
+                : 'bg-dark-800 text-gray-400 hover:text-white'
+            }`}
+          >
+            <Zap className="w-4 h-4 inline mr-2" />
+            Live Session
+          </button>
+          <button
+            onClick={() => setActiveTab('historical')}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              activeTab === 'historical' 
+                ? 'bg-f1-red text-white' 
+                : 'bg-dark-800 text-gray-400 hover:text-white'
+            }`}
+          >
+            <Clock className="w-4 h-4 inline mr-2" />
+            Historical
+          </button>
         </div>
       </div>
 
+      {/* Live Session Analysis */}
+      {activeTab === 'live' && (
+        <>
+          <SessionSelector />
+          
+          {!currentSession && (
+            <div className="apex-card p-8 text-center">
+              <Target className="w-12 h-12 mx-auto text-f1-gray mb-4" />
+              <h3 className="text-lg font-semibold mb-2">Session Required</h3>
+              <p className="text-gray-400">Load a session to analyze real-time strategy data.</p>
+            </div>
+          )}
+
+          {currentSession && (
+            <div className="space-y-6">
+              {liveLoading && <LoadingSpinner message="Loading strategy data..." />}
+              
+              {/* Quick Stats */}
+              <div className="dashboard-grid">
+                <StatCard
+                  title="Session"
+                  value={currentSession.session_name}
+                  subtitle={currentSession.grand_prix}
+                  icon={Target}
+                  color="red"
+                />
+                {safetyCar && (
+                  <StatCard
+                    title="SC Probability"
+                    value={`${(safetyCar.historical_sc_probability * 100).toFixed(0)}%`}
+                    subtitle="Historical"
+                    icon={AlertTriangle}
+                    color={safetyCar.historical_sc_probability > 0.5 ? 'red' : 'green'}
+                  />
+                )}
+                {fuelEffect && (
+                  <StatCard
+                    title="Fuel Effect"
+                    value={`${fuelEffect.total_fuel_effect_seconds.toFixed(1)}s`}
+                    subtitle="Total time saved"
+                    icon={Fuel}
+                    color="blue"
+                  />
+                )}
+                {positionChanges && (
+                  <StatCard
+                    title="Position Changes"
+                    value={positionChanges.drivers.reduce((acc, d) => acc + Math.abs(d.positions_gained), 0)}
+                    subtitle="Total position changes"
+                    icon={TrendingUp}
+                    color="green"
+                  />
+                )}
+              </div>
+
+              {/* Tyre Degradation */}
+              {tyreDegradation && (
+                <div className="apex-card p-4">
+                  <h3 className="text-lg font-semibold mb-4">🏎️ Tyre Degradation Analysis</h3>
+                  <TyreDegradationChart data={tyreDegradation} />
+                </div>
+              )}
+
+              {/* Pit Window Analysis */}
+              <div className="apex-card p-4">
+                <h3 className="text-lg font-semibold mb-4">🔧 Pit Window Calculator</h3>
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-400 mb-2">Select Driver</label>
+                  <select
+                    value={selectedDriver}
+                    onChange={(e) => setSelectedDriver(e.target.value)}
+                    className="apex-select w-full max-w-xs"
+                  >
+                    <option value="">Select driver...</option>
+                    {availableDrivers.map(driver => (
+                      <option key={driver} value={driver}>{driver}</option>
+                    ))}
+                  </select>
+                </div>
+                {pitWindowLoading && <LoadingSpinner message="Calculating pit windows..." />}
+                {pitWindow && <PitWindowChart data={pitWindow} />}
+                {!selectedDriver && (
+                  <p className="text-gray-400 text-center py-4">Select a driver to analyze pit windows</p>
+                )}
+              </div>
+
+              {/* Position Changes */}
+              {positionChanges && (
+                <div className="apex-card p-4">
+                  <h3 className="text-lg font-semibold mb-4">📈 Position Changes</h3>
+                  <PositionChart data={positionChanges} />
+                </div>
+              )}
+
+              {/* Safety Car & DRS Trains */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {safetyCar && <SafetyCarCard data={safetyCar} />}
+                {drsTrains && (
+                  <div className="apex-card p-4">
+                    <h3 className="text-lg font-semibold mb-4">🚗 DRS Train Detection</h3>
+                    <DRSTrainChart data={drsTrains} />
+                  </div>
+                )}
+              </div>
+
+              {/* Fuel Effect */}
+              {fuelEffect && (
+                <div className="apex-card p-4">
+                  <h3 className="text-lg font-semibold mb-4">⛽ Fuel Load Impact</h3>
+                  <FuelEffectChart data={fuelEffect} />
+                </div>
+              )}
+
+              {/* What-If Simulator */}
+              {tyreDegradation && (
+                <div className="apex-card p-4">
+                  <WhatIfSimulator 
+                    tyreDegradation={tyreDegradation}
+                    pitWindow={pitWindow || undefined}
+                    totalLaps={positionChanges?.total_laps || 57}
+                  />
+                </div>
+              )}
+            </div>
+          )}
+        </>
+      )}
+
+      {/* Historical Analysis */}
+      {activeTab === 'historical' && (
+        <>
       {/* Search Controls */}
       <div className="apex-card p-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -219,7 +434,7 @@ export default function StrategyPage() {
               onChange={(e) => handleYearChange(Number(e.target.value))}
               className="apex-select"
             >
-              {seasons.map((year) => (
+              {historicalSeasons.map((year) => (
                 <option key={year} value={year}>{year}</option>
               ))}
             </select>
@@ -347,6 +562,8 @@ export default function StrategyPage() {
             Choose a season and race to analyze historical pit stop strategies and efficiency.
           </p>
         </div>
+      )}
+        </>
       )}
     </div>
   );

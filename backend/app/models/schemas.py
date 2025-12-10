@@ -158,12 +158,72 @@ class DriverTelemetry(BaseModel):
     avg_speed: float
 
 
+class DeltaTPoint(BaseModel):
+    """Single Delta-T data point for cumulative time difference"""
+    distance: float
+    delta: float  # Cumulative time difference (positive = driver 1 faster)
+    time_1: float
+    time_2: float
+
+
+class TrackMapPoint(BaseModel):
+    """Track map coordinate with telemetry data"""
+    x: float
+    y: float
+    distance: float
+    speed: float
+    gear: int
+    throttle: float
+    brake: float
+
+
+class TrackMapData(BaseModel):
+    """Track map visualization data"""
+    driver_1: List[TrackMapPoint]
+    driver_2: List[TrackMapPoint]
+    track_path: List[TrackPoint]
+    speed_range: Optional[Dict[str, float]] = None
+    gear_range: Optional[Dict[str, int]] = None
+
+
 class TelemetryCompareResponse(BaseModel):
     """Response for telemetry comparison"""
     driver_1: DriverTelemetry
     driver_2: DriverTelemetry
     speed_delta: float  # Driver 2 - Driver 1 time delta
     segment_info: Optional[Dict[str, float]] = None
+    delta_t: Optional[List[DeltaTPoint]] = None  # Cumulative time difference along distance
+    track_map: Optional[TrackMapData] = None  # Track coordinates with speed/gear data
+
+
+# ============================================================================
+# RACE GAP MODELS
+# ============================================================================
+
+class LapGap(BaseModel):
+    """Gap data for a single lap"""
+    lap: int
+    gap: float  # Cumulative gap to benchmark
+    lap_delta: Optional[float] = None  # Single lap delta
+
+
+class DriverGapData(BaseModel):
+    """Gap data for a driver relative to benchmark"""
+    driver: str
+    color: str
+    is_benchmark: bool
+    gaps: List[LapGap]
+    final_gap: float
+
+
+class RaceGapsResponse(BaseModel):
+    """Response for race gaps analysis"""
+    event_name: str
+    year: int
+    benchmark_driver: str
+    total_laps: int
+    driver_gaps: List[DriverGapData]
+    driver_colors: Dict[str, str]
 
 
 # ============================================================================
@@ -261,8 +321,8 @@ class WeatherCorrelationResponse(BaseModel):
 # ============================================================================
 
 class HistoricalStrategyRequest(BaseModel):
-    """Request for historical strategy analysis"""
-    year: int = Field(..., ge=2010, le=2024)
+    """Request for historical strategy analysis (Jolpica API - 1950+)"""
+    year: int = Field(..., ge=1950, le=2025)
     race_round: int = Field(..., ge=1, le=24)
     strategy_filter: List[str] = Field(default=["1-stop", "2-stop"])
     pit_time_loss: float = Field(default=22.0, ge=15, le=35)

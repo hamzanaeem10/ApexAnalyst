@@ -1,5 +1,16 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { sessionApi, telemetryApi, lapApi, weatherApi, strategyApi, circuitApi } from '../services/api';
+import { 
+  sessionApi, 
+  telemetryApi, 
+  lapApi, 
+  weatherApi, 
+  strategyApi, 
+  circuitApi, 
+  raceApi,
+  advancedStrategyApi,
+  advancedWeatherApi,
+  advancedSegmentsApi
+} from '../services/api';
 import { useSessionStore } from '../store/sessionStore';
 import type {
   SessionLoadRequest,
@@ -24,6 +35,9 @@ export const queryKeys = {
   races: (year: number) => ['races', year] as const,
   segmentAnalysis: (request: SegmentAnalysisRequest) => ['segment', request] as const,
   trackInfo: (sessionId: string) => ['trackInfo', sessionId] as const,
+  raceAnalysis: (sessionId: string) => ['raceAnalysis', sessionId] as const,
+  raceGaps: (sessionId: string, benchmarkDriver: string) => ['raceGaps', sessionId, benchmarkDriver] as const,
+  raceDrivers: (sessionId: string) => ['raceDrivers', sessionId] as const,
 };
 
 // ==================== Session Hooks ====================
@@ -72,6 +86,15 @@ export function useTelemetryComparison(request: TelemetryCompareRequest | null) 
     queryKey: queryKeys.telemetry(request!),
     queryFn: () => telemetryApi.compareTelemetry(request!),
     enabled: !!request && !!request.driver_id_1 && !!request.driver_id_2,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+}
+
+export function useRaceAnalysis(sessionId: string | undefined) {
+  return useQuery({
+    queryKey: queryKeys.raceAnalysis(sessionId || ''),
+    queryFn: () => telemetryApi.getRaceAnalysis(sessionId!),
+    enabled: !!sessionId,
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 }
@@ -145,5 +168,162 @@ export function useTrackInfo(sessionId: string | undefined) {
     queryKey: queryKeys.trackInfo(sessionId || ''),
     queryFn: () => circuitApi.getTrackInfo(sessionId!),
     enabled: !!sessionId,
+  });
+}
+
+// ==================== Race Gap Hooks ====================
+export function useRaceGaps(sessionId: string | undefined, benchmarkDriver: string | undefined, drivers?: string) {
+  return useQuery({
+    queryKey: queryKeys.raceGaps(sessionId || '', benchmarkDriver || ''),
+    queryFn: () => raceApi.getRaceGaps(sessionId!, benchmarkDriver!, drivers),
+    enabled: !!sessionId && !!benchmarkDriver,
+    staleTime: 5 * 60 * 1000, // 5 minutes - race data caching for performance
+  });
+}
+
+export function useRaceDrivers(sessionId: string | undefined) {
+  return useQuery({
+    queryKey: queryKeys.raceDrivers(sessionId || ''),
+    queryFn: () => raceApi.getRaceDrivers(sessionId!),
+    enabled: !!sessionId,
+    staleTime: 10 * 60 * 1000, // 10 minutes
+  });
+}
+
+// ==================== Advanced Strategy Hooks ====================
+export function useTyreDegradation(sessionId: string | undefined, drivers?: string) {
+  return useQuery({
+    queryKey: ['tyreDegradation', sessionId, drivers],
+    queryFn: () => advancedStrategyApi.getTyreDegradation(sessionId!, drivers),
+    enabled: !!sessionId,
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
+export function usePitWindow(sessionId: string | undefined, driver: string | undefined, pitTimeLoss?: number) {
+  return useQuery({
+    queryKey: ['pitWindow', sessionId, driver, pitTimeLoss],
+    queryFn: () => advancedStrategyApi.getPitWindow(sessionId!, driver!, pitTimeLoss),
+    enabled: !!sessionId && !!driver,
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
+export function usePositionChanges(sessionId: string | undefined) {
+  return useQuery({
+    queryKey: ['positionChanges', sessionId],
+    queryFn: () => advancedStrategyApi.getPositionChanges(sessionId!),
+    enabled: !!sessionId,
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
+export function useFuelEffect(sessionId: string | undefined) {
+  return useQuery({
+    queryKey: ['fuelEffect', sessionId],
+    queryFn: () => advancedStrategyApi.getFuelEffect(sessionId!),
+    enabled: !!sessionId,
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
+export function useSafetyCarProbability(sessionId: string | undefined) {
+  return useQuery({
+    queryKey: ['safetyCarProbability', sessionId],
+    queryFn: () => advancedStrategyApi.getSafetyCarProbability(sessionId!),
+    enabled: !!sessionId,
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
+export function useDRSTrains(sessionId: string | undefined) {
+  return useQuery({
+    queryKey: ['drsTrains', sessionId],
+    queryFn: () => advancedStrategyApi.getDRSTrains(sessionId!),
+    enabled: !!sessionId,
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
+// ==================== Advanced Weather Hooks ====================
+export function useWeatherTimeline(sessionId: string | undefined) {
+  return useQuery({
+    queryKey: ['weatherTimeline', sessionId],
+    queryFn: () => advancedWeatherApi.getWeatherTimeline(sessionId!),
+    enabled: !!sessionId,
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
+export function useWindRose(sessionId: string | undefined) {
+  return useQuery({
+    queryKey: ['windRose', sessionId],
+    queryFn: () => advancedWeatherApi.getWindRose(sessionId!),
+    enabled: !!sessionId,
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
+export function useTrackEvolution(sessionId: string | undefined) {
+  return useQuery({
+    queryKey: ['trackEvolution', sessionId],
+    queryFn: () => advancedWeatherApi.getTrackEvolution(sessionId!),
+    enabled: !!sessionId,
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
+export function useWeatherLapImpact(sessionId: string | undefined, driver?: string) {
+  return useQuery({
+    queryKey: ['weatherLapImpact', sessionId, driver],
+    queryFn: () => advancedWeatherApi.getWeatherLapImpact(sessionId!, driver),
+    enabled: !!sessionId,
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
+// ==================== Advanced Segments Hooks ====================
+export function useMiniSectors(sessionId: string | undefined, numSectors?: number) {
+  return useQuery({
+    queryKey: ['miniSectors', sessionId, numSectors],
+    queryFn: () => advancedSegmentsApi.getMiniSectors(sessionId!, numSectors),
+    enabled: !!sessionId,
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
+export function useTheoreticalBest(sessionId: string | undefined) {
+  return useQuery({
+    queryKey: ['theoreticalBest', sessionId],
+    queryFn: () => advancedSegmentsApi.getTheoreticalBest(sessionId!),
+    enabled: !!sessionId,
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
+export function useSectorConsistency(sessionId: string | undefined) {
+  return useQuery({
+    queryKey: ['sectorConsistency', sessionId],
+    queryFn: () => advancedSegmentsApi.getSectorConsistency(sessionId!),
+    enabled: !!sessionId,
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
+export function useCornerAnalysis(sessionId: string | undefined, cornerDistance: number | undefined, window?: number) {
+  return useQuery({
+    queryKey: ['cornerAnalysis', sessionId, cornerDistance, window],
+    queryFn: () => advancedSegmentsApi.getCornerAnalysis(sessionId!, cornerDistance!, window),
+    enabled: !!sessionId && cornerDistance !== undefined,
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
+export function useSpeedTrace(sessionId: string | undefined, drivers: string | undefined, startDist?: number, endDist?: number) {
+  return useQuery({
+    queryKey: ['speedTrace', sessionId, drivers, startDist, endDist],
+    queryFn: () => advancedSegmentsApi.getSpeedTrace(sessionId!, drivers!, startDist, endDist),
+    enabled: !!sessionId && !!drivers,
+    staleTime: 5 * 60 * 1000,
   });
 }

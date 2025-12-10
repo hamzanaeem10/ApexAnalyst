@@ -99,11 +99,21 @@ export function formatPercentage(value: number): string {
   return `${(value * 100).toFixed(1)}%`;
 }
 
-// Get season years for selector
+// Get season years for selector (FastF1 data - 2018+)
 export function getAvailableSeasons(): number[] {
   const currentYear = new Date().getFullYear();
   const seasons = [];
   for (let year = currentYear; year >= 2018; year--) {
+    seasons.push(year);
+  }
+  return seasons;
+}
+
+// Get historical seasons for Jolpica API (1950+)
+export function getHistoricalSeasons(): number[] {
+  const currentYear = new Date().getFullYear();
+  const seasons = [];
+  for (let year = currentYear; year >= 1950; year--) {
     seasons.push(year);
   }
   return seasons;

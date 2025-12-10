@@ -7,13 +7,15 @@ import {
   Layers,
   Home,
   Menu,
-  X
+  X,
+  BarChart3
 } from 'lucide-react';
 import { useState } from 'react';
 
 const navItems = [
   { path: '/', label: 'Dashboard', icon: Home },
   { path: '/telemetry', label: 'Telemetry', icon: Activity },
+  { path: '/race-analysis', label: 'Race Analysis', icon: BarChart3 },
   { path: '/lap-analysis', label: 'Lap Analysis', icon: Timer },
   { path: '/weather', label: 'Weather', icon: Cloud },
   { path: '/strategy', label: 'Strategy', icon: Target },

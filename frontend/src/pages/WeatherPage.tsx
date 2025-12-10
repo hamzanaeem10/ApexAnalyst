@@ -2,11 +2,14 @@ import { useMemo } from 'react';
 import { Cloud, AlertCircle, Droplets, Thermometer, Wind } from 'lucide-react';
 import Plot from 'react-plotly.js';
 import { useCurrentSession } from '../store/sessionStore';
-import { useWeatherCorrelation } from '../hooks/useApi';
+import { useWeatherCorrelation, useWeatherTimeline, useWindRose, useTrackEvolution } from '../hooks/useApi';
 import SessionSelector from '../components/session/SessionSelector';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import ErrorDisplay from '../components/common/ErrorDisplay';
 import StatCard from '../components/common/StatCard';
+import WeatherTimelineChart from '../components/charts/WeatherTimelineChart';
+import WindRoseChart from '../components/charts/WindRoseChart';
+import TrackEvolutionChart from '../components/charts/TrackEvolutionChart';
 import { plotlyDarkLayout, plotlyConfig } from '../utils/helpers';
 import type { WeatherCorrelationRequest } from '../types';
 import type { Data, Layout } from 'plotly.js';
@@ -29,6 +32,13 @@ export default function WeatherPage() {
     error: weatherError,
     refetch 
   } = useWeatherCorrelation(weatherRequest);
+
+  // Advanced weather hooks
+  const { data: weatherTimeline, isLoading: timelineLoading } = useWeatherTimeline(currentSession?.session_id);
+  const { data: windRose, isLoading: windLoading } = useWindRose(currentSession?.session_id);
+  const { data: trackEvolution, isLoading: trackLoading } = useTrackEvolution(currentSession?.session_id);
+
+  const advancedLoading = timelineLoading || windLoading || trackLoading;
 
   // Temperature evolution chart traces
   const tempTraces: Data[] = useMemo(() => {
@@ -158,6 +168,32 @@ export default function WeatherPage() {
             />
           </div>
 
+          {/* Advanced Weather Charts */}
+          {advancedLoading && <LoadingSpinner message="Loading advanced weather data..." />}
+          
+          {/* Weather Timeline */}
+          {weatherTimeline && (
+            <div className="apex-card p-4">
+              <h3 className="text-lg font-semibold mb-4">🌡️ Weather Timeline</h3>
+              <WeatherTimelineChart data={weatherTimeline} />
+            </div>
+          )}
+
+          {/* Wind Rose and Track Evolution side by side */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {windRose && (
+              <div className="apex-card p-4">
+                <h3 className="text-lg font-semibold mb-4">🌬️ Wind Rose</h3>
+                <WindRoseChart data={windRose} />
+              </div>
+            )}
+            {trackEvolution && (
+              <div className="apex-card p-4">
+                <h3 className="text-lg font-semibold mb-4">🛤️ Track Evolution</h3>
+                <TrackEvolutionChart data={trackEvolution} />
+              </div>
+            )}
+          </div>
           {/* Temperature Evolution Chart */}
           <div className="apex-card p-6">
             <Plot

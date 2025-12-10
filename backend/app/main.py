@@ -17,7 +17,11 @@ from app.api import (
     lap_router,
     weather_router,
     strategy_router,
-    circuit_router
+    circuit_router,
+    race_router,
+    advanced_strategy_router,
+    advanced_weather_router,
+    advanced_segments_router
 )
 from app.services.session_service import get_session_manager
 
@@ -140,7 +144,8 @@ async def root():
             "lap": "/api/v1/lap",
             "weather": "/api/v1/weather",
             "strategy": "/api/v1/strategy",
-            "circuit": "/api/v1/circuit"
+            "circuit": "/api/v1/circuit",
+            "race": "/api/v1/race"
         }
     }
 
@@ -182,6 +187,30 @@ app.include_router(
     circuit_router,
     prefix=f"{API_V1_PREFIX}/circuit",
     tags=["Circuit Segment Analysis"]
+)
+
+app.include_router(
+    race_router,
+    prefix=f"{API_V1_PREFIX}/race",
+    tags=["Race Gap Analysis"]
+)
+
+app.include_router(
+    advanced_strategy_router,
+    prefix=f"{API_V1_PREFIX}/advanced-strategy",
+    tags=["Advanced Strategy Analysis"]
+)
+
+app.include_router(
+    advanced_weather_router,
+    prefix=f"{API_V1_PREFIX}/advanced-weather",
+    tags=["Advanced Weather Analysis"]
+)
+
+app.include_router(
+    advanced_segments_router,
+    prefix=f"{API_V1_PREFIX}/advanced-segments",
+    tags=["Advanced Segment Analysis"]
 )
 
 

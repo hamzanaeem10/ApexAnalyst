@@ -4,6 +4,8 @@ import { useCurrentSession } from '../store/sessionStore';
 import { useDrivers, useTelemetryComparison } from '../hooks/useApi';
 import SessionSelector from '../components/session/SessionSelector';
 import TelemetryChart from '../components/charts/TelemetryChart';
+import DeltaTChart from '../components/charts/DeltaTChart';
+import TrackMap from '../components/charts/TrackMap';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import ErrorDisplay from '../components/common/ErrorDisplay';
 import { getDriverColor } from '../utils/helpers';
@@ -211,6 +213,42 @@ export default function TelemetryPage() {
 
       {telemetryData && (
         <div className="space-y-6">
+          {/* Delta-T Chart - Cumulative Time Loss */}
+          {telemetryData.delta_t && telemetryData.delta_t.length > 0 && (
+            <DeltaTChart
+              data={telemetryData.delta_t}
+              driver1={{
+                id: telemetryData.driver_1.driver_id,
+                name: telemetryData.driver_1.driver_name,
+                color: telemetryData.driver_1.team_color || getDriverColor(telemetryData.driver_1.driver_id),
+              }}
+              driver2={{
+                id: telemetryData.driver_2.driver_id,
+                name: telemetryData.driver_2.driver_name,
+                color: telemetryData.driver_2.team_color || getDriverColor(telemetryData.driver_2.driver_id),
+              }}
+              height={300}
+            />
+          )}
+
+          {/* Track Map with Speed/Gear Coloring */}
+          {telemetryData.track_map && (telemetryData.track_map.driver_1.length > 0 || telemetryData.track_map.driver_2.length > 0) && (
+            <TrackMap
+              data={telemetryData.track_map}
+              driver1={{
+                id: telemetryData.driver_1.driver_id,
+                name: telemetryData.driver_1.driver_name,
+                color: telemetryData.driver_1.team_color || getDriverColor(telemetryData.driver_1.driver_id),
+              }}
+              driver2={{
+                id: telemetryData.driver_2.driver_id,
+                name: telemetryData.driver_2.driver_name,
+                color: telemetryData.driver_2.team_color || getDriverColor(telemetryData.driver_2.driver_id),
+              }}
+              height={450}
+            />
+          )}
+
           {/* Speed Chart */}
           <TelemetryChart
             title="Speed Comparison"

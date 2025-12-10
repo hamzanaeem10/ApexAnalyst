@@ -111,11 +111,82 @@ export interface DriverTelemetry {
   avg_speed: number;
 }
 
+// Delta-T data for cumulative time loss visualization
+export interface DeltaTPoint {
+  distance: number;
+  delta: number;
+  time_1: number;
+  time_2: number;
+}
+
+// Track map data point with coordinates and telemetry
+export interface TrackMapPoint {
+  x: number;
+  y: number;
+  distance: number;
+  speed: number;
+  gear: number;
+  throttle: number;
+  brake: number;
+}
+
+// Track map visualization data
+export interface TrackMapData {
+  driver_1: TrackMapPoint[];
+  driver_2: TrackMapPoint[];
+  track_path: TrackPoint[];
+  speed_range?: { min: number; max: number };
+  gear_range?: { min: number; max: number };
+}
+
 export interface TelemetryCompareResponse {
   driver_1: DriverTelemetry;
   driver_2: DriverTelemetry;
   speed_delta: number;
   segment_info?: Record<string, number>;
+  delta_t?: DeltaTPoint[];  // Cumulative time difference along distance
+  track_map?: TrackMapData;  // Track coordinates with speed/gear data
+}
+
+// ============================================================================
+// RACE GAP TYPES
+// ============================================================================
+
+export interface LapGap {
+  lap: number;
+  gap: number;
+  lap_delta?: number;
+}
+
+export interface DriverGapData {
+  driver: string;
+  color: string;
+  is_benchmark: boolean;
+  gaps: LapGap[];
+  final_gap: number;
+}
+
+export interface RaceGapsRequest {
+  session_id: string;
+  benchmark_driver: string;
+  drivers?: string;
+}
+
+export interface RaceGapsResponse {
+  event_name: string;
+  year: number;
+  benchmark_driver: string;
+  total_laps: number;
+  driver_gaps: DriverGapData[];
+  driver_colors: Record<string, string>;
+}
+
+export interface RaceDriver {
+  abbreviation: string;
+  full_name: string;
+  team: string;
+  color: string;
+  position: number;
 }
 
 // ============================================================================

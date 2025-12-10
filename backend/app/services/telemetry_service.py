@@ -7,6 +7,7 @@ import pandas as pd
 import numpy as np
 from typing import Optional, List, Dict, Any, Tuple
 import logging
+from scipy import interpolate
 
 from app.models.schemas import (
     TelemetryPoint, TrajectoryPoint, DriverTelemetry
@@ -186,8 +187,138 @@ class TelemetryService:
             "segment_info": {
                 "start": start_dist,
                 "end": end_dist
-            } if start_dist is not None and end_dist is not None else None
+            } if start_dist is not None and end_dist is not None else None,
+            # Delta-T data for cumulative time loss visualization
+            "delta_t": service.calculate_delta_t(lap1, lap2),
+            # Track map data with coordinates and telemetry
+            "track_map": service.get_track_map_data(lap1, lap2)
         }
+    
+    @staticmethod
+    def calculate_delta_t(lap1, lap2) -> List[Dict[str, float]]:
+        """
+        Calculate cumulative time difference (Delta-T) between two laps
+        along the distance axis. Shows where time is gained/lost.
+        """
+        try:
+            tel1 = lap1.get_telemetry()
+            tel2 = lap2.get_telemetry()
+            
+            if tel1.empty or tel2.empty:
+                return []
+            
+            # Get distance and time arrays
+            dist1 = tel1['Distance'].values
+            time1 = np.array([t.total_seconds() if pd.notna(t) else 0 for t in tel1['Time']])
+            
+            dist2 = tel2['Distance'].values
+            time2 = np.array([t.total_seconds() if pd.notna(t) else 0 for t in tel2['Time']])
+            
+            # Create common distance points for interpolation
+            max_dist = min(dist1.max(), dist2.max())
+            common_dist = np.linspace(0, max_dist, min(500, int(max_dist / 10)))
+            
+            # Interpolate times at common distances
+            try:
+                interp1 = interpolate.interp1d(dist1, time1, kind='linear', fill_value='extrapolate')
+                interp2 = interpolate.interp1d(dist2, time2, kind='linear', fill_value='extrapolate')
+                
+                time1_interp = interp1(common_dist)
+                time2_interp = interp2(common_dist)
+            except Exception:
+                return []
+            
+            # Calculate cumulative delta (driver 2 - driver 1)
+            # Positive = driver 1 faster (driver 2 losing time)
+            # Negative = driver 2 faster (driver 2 gaining time)
+            delta_t = time2_interp - time1_interp
+            
+            # Downsample for output (max 200 points)
+            step = max(1, len(common_dist) // 200)
+            result = []
+            
+            for i in range(0, len(common_dist), step):
+                result.append({
+                    "distance": round(float(common_dist[i]), 1),
+                    "delta": round(float(delta_t[i]), 4),
+                    "time_1": round(float(time1_interp[i]), 4),
+                    "time_2": round(float(time2_interp[i]), 4)
+                })
+            
+            return result
+            
+        except Exception as e:
+            logger.error(f"Error calculating Delta-T: {e}")
+            return []
+    
+    @staticmethod
+    def get_track_map_data(lap1, lap2) -> Dict[str, Any]:
+        """
+        Get track map coordinates with speed and gear data for visualization.
+        Returns x,y coordinates with corresponding telemetry for coloring.
+        """
+        try:
+            tel1 = lap1.get_telemetry()
+            tel2 = lap2.get_telemetry()
+            
+            if tel1.empty or 'X' not in tel1.columns or 'Y' not in tel1.columns:
+                return {"driver_1": [], "driver_2": [], "track_path": []}
+            
+            def extract_track_data(tel, max_points=300):
+                """Extract track map data from telemetry"""
+                step = max(1, len(tel) // max_points)
+                points = []
+                
+                for i in range(0, len(tel), step):
+                    row = tel.iloc[i]
+                    try:
+                        points.append({
+                            "x": float(row['X']),
+                            "y": float(row['Y']),
+                            "distance": float(row['Distance']),
+                            "speed": float(row['Speed']),
+                            "gear": int(row.get('nGear', 0)),
+                            "throttle": float(row.get('Throttle', 0)),
+                            "brake": float(row.get('Brake', 0))
+                        })
+                    except:
+                        continue
+                
+                return points
+            
+            # Get data for both drivers
+            driver1_data = extract_track_data(tel1)
+            driver2_data = extract_track_data(tel2) if not tel2.empty and 'X' in tel2.columns else []
+            
+            # Create simplified track path (just x,y for outline)
+            track_path = []
+            step = max(1, len(tel1) // 200)
+            for i in range(0, len(tel1), step):
+                row = tel1.iloc[i]
+                try:
+                    track_path.append({
+                        "x": float(row['X']),
+                        "y": float(row['Y'])
+                    })
+                except:
+                    continue
+            
+            # Get speed ranges for color scaling
+            all_speeds = [p['speed'] for p in driver1_data + driver2_data]
+            min_speed = min(all_speeds) if all_speeds else 0
+            max_speed = max(all_speeds) if all_speeds else 300
+            
+            return {
+                "driver_1": driver1_data,
+                "driver_2": driver2_data,
+                "track_path": track_path,
+                "speed_range": {"min": min_speed, "max": max_speed},
+                "gear_range": {"min": 1, "max": 8}
+            }
+            
+        except Exception as e:
+            logger.error(f"Error getting track map data: {e}")
+            return {"driver_1": [], "driver_2": [], "track_path": []}
     
     @staticmethod
     def get_available_laps(session, driver_id: str) -> List[Dict]:

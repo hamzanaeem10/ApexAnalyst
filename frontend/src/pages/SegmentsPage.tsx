@@ -1,13 +1,26 @@
 import { useState, useMemo } from 'react';
-import { Layers, AlertCircle, TrendingUp, Clock, Gauge } from 'lucide-react';
+import { Layers, AlertCircle, TrendingUp, Clock, Gauge, Zap, Target } from 'lucide-react';
 import Plot from 'react-plotly.js';
 import { useCurrentSession } from '../store/sessionStore';
-import { useSegmentAnalysis, useTrackInfo } from '../hooks/useApi';
+import { 
+  useSegmentAnalysis, 
+  useTrackInfo, 
+  useMiniSectors, 
+  useTheoreticalBest, 
+  useSpeedTrace,
+  useCornerAnalysis,
+  useSectorConsistency
+} from '../hooks/useApi';
 import SessionSelector from '../components/session/SessionSelector';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import ErrorDisplay from '../components/common/ErrorDisplay';
 import StatCard from '../components/common/StatCard';
 import ApexDataTable from '../components/tables/ApexDataTable';
+import MiniSectorChart from '../components/charts/MiniSectorChart';
+import TheoreticalBestChart from '../components/charts/TheoreticalBestChart';
+import SectorConsistencyChart from '../components/charts/SectorConsistencyChart';
+import SpeedTraceChart from '../components/charts/SpeedTraceChart';
+import CornerAnalysisChart from '../components/charts/CornerAnalysisChart';
 import { plotlyDarkLayout, plotlyConfig } from '../utils/helpers';
 import type { SegmentAnalysisRequest, SegmentLeaderboardEntry, TeamDistribution } from '../types';
 import type { ColumnDef } from '@tanstack/react-table';
@@ -28,9 +41,39 @@ export default function SegmentsPage() {
   const [segmentEnd, setSegmentEnd] = useState<number>(500);
   const [teamFilter] = useState<string[]>([]);
   const [shouldAnalyze, setShouldAnalyze] = useState(false);
+  const [activeTab, setActiveTab] = useState<'segment' | 'advanced'>('advanced');
+  const [cornerDistance, setCornerDistance] = useState<number>(500);
+  const [selectedDrivers, setSelectedDrivers] = useState<string>('');
 
   // Get track info for segment suggestions
   const { data: trackInfo } = useTrackInfo(currentSession?.session_id) as { data: TrackInfoResponse | undefined };
+
+  // Advanced segment hooks
+  const { data: miniSectors, isLoading: miniSectorsLoading } = useMiniSectors(
+    activeTab === 'advanced' ? currentSession?.session_id : undefined
+  );
+  const { data: theoreticalBest, isLoading: theoreticalLoading } = useTheoreticalBest(
+    activeTab === 'advanced' ? currentSession?.session_id : undefined
+  );
+  const { data: sectorConsistency, isLoading: sectorConsistencyLoading } = useSectorConsistency(
+    activeTab === 'advanced' ? currentSession?.session_id : undefined
+  );
+  const { data: speedTrace, isLoading: speedTraceLoading } = useSpeedTrace(
+    activeTab === 'advanced' && selectedDrivers ? currentSession?.session_id : undefined,
+    selectedDrivers
+  );
+  const { data: cornerAnalysis, isLoading: cornerLoading } = useCornerAnalysis(
+    activeTab === 'advanced' && cornerDistance > 0 ? currentSession?.session_id : undefined,
+    cornerDistance
+  );
+
+  const advancedLoading = miniSectorsLoading || theoreticalLoading || sectorConsistencyLoading;
+
+  // Available drivers from mini-sector data
+  const availableDrivers = useMemo(() => {
+    if (!miniSectors) return [];
+    return miniSectors.driver_dominance.map(d => d.driver);
+  }, [miniSectors]);
 
   // Build request when user clicks analyze
   const segmentRequest: SegmentAnalysisRequest | null = useMemo(() => {
@@ -236,16 +279,140 @@ export default function SegmentsPage() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex items-center gap-3">
-        <Layers className="w-8 h-8 text-f1-red" />
-        <div>
-          <h1 className="text-2xl font-bold">Circuit Segment Analysis</h1>
-          <p className="text-gray-400 text-sm">
-            {currentSession.grand_prix} - {currentSession.session_name}
-          </p>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <Layers className="w-8 h-8 text-f1-red" />
+          <div>
+            <h1 className="text-2xl font-bold">Circuit Segment Analysis</h1>
+            <p className="text-gray-400 text-sm">
+              {currentSession.grand_prix} - {currentSession.session_name}
+            </p>
+          </div>
+        </div>
+        
+        {/* Tab Switcher */}
+        <div className="flex gap-2">
+          <button
+            onClick={() => setActiveTab('advanced')}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              activeTab === 'advanced' 
+                ? 'bg-f1-red text-white' 
+                : 'bg-dark-800 text-gray-400 hover:text-white'
+            }`}
+          >
+            <Zap className="w-4 h-4 inline mr-2" />
+            Advanced Analysis
+          </button>
+          <button
+            onClick={() => setActiveTab('segment')}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              activeTab === 'segment' 
+                ? 'bg-f1-red text-white' 
+                : 'bg-dark-800 text-gray-400 hover:text-white'
+            }`}
+          >
+            <Target className="w-4 h-4 inline mr-2" />
+            Segment Compare
+          </button>
         </div>
       </div>
 
+      {/* Advanced Segment Analysis */}
+      {activeTab === 'advanced' && (
+        <div className="space-y-6">
+          {advancedLoading && <LoadingSpinner message="Loading segment analysis..." />}
+          
+          {/* Mini-Sectors */}
+          {miniSectors && (
+            <div className="apex-card p-4">
+              <h3 className="text-lg font-semibold mb-4">🎯 Mini-Sector Analysis</h3>
+              <MiniSectorChart data={miniSectors} />
+            </div>
+          )}
+          
+          {/* Theoretical Best Lap */}
+          {theoreticalBest && (
+            <div className="apex-card p-4">
+              <h3 className="text-lg font-semibold mb-4">⚡ Theoretical Best Lap</h3>
+              <TheoreticalBestChart data={theoreticalBest} />
+            </div>
+          )}
+
+          {/* Sector Consistency */}
+          {sectorConsistency && (
+            <div className="apex-card p-4">
+              <h3 className="text-lg font-semibold mb-4">📊 Sector Consistency</h3>
+              <SectorConsistencyChart data={sectorConsistency} />
+            </div>
+          )}
+          
+          {/* Speed Trace Overlay */}
+          <div className="apex-card p-4">
+            <h3 className="text-lg font-semibold mb-4">🏎️ Speed Trace Overlay</h3>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-400 mb-2">
+                Select Drivers (comma-separated)
+              </label>
+              <input
+                type="text"
+                value={selectedDrivers}
+                onChange={(e) => setSelectedDrivers(e.target.value)}
+                placeholder="e.g., VER,HAM,LEC"
+                className="apex-input w-full max-w-md"
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                Available: {availableDrivers.join(', ')}
+              </p>
+            </div>
+            {speedTraceLoading && <LoadingSpinner message="Loading speed traces..." />}
+            {speedTrace && <SpeedTraceChart data={speedTrace} />}
+            {!selectedDrivers && (
+              <p className="text-gray-400 text-center py-4">Enter driver codes to compare speed traces</p>
+            )}
+          </div>
+
+          {/* Corner Analysis */}
+          <div className="apex-card p-4">
+            <h3 className="text-lg font-semibold mb-4">🔄 Corner-by-Corner Analysis</h3>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-400 mb-2">
+                Corner Distance (m)
+              </label>
+              <input
+                type="number"
+                value={cornerDistance}
+                onChange={(e) => setCornerDistance(Number(e.target.value))}
+                min={0}
+                max={trackInfo?.track_length || 5000}
+                className="apex-input w-32"
+              />
+              {trackInfo?.suggested_segments && (
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {trackInfo.suggested_segments.slice(0, 6).map((seg, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setCornerDistance(Math.round(seg.start))}
+                      className={`px-2 py-1 text-xs rounded border ${
+                        cornerDistance === Math.round(seg.start)
+                          ? 'bg-f1-red border-f1-red'
+                          : 'border-dark-700 hover:border-f1-red'
+                      }`}
+                    >
+                      {seg.name}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+            {cornerLoading && <LoadingSpinner message="Analyzing corner..." />}
+            {cornerAnalysis && <CornerAnalysisChart data={cornerAnalysis} />}
+          </div>
+        </div>
+      )}
+
+      {/* Classic Segment Analysis */}
+      {activeTab === 'segment' && (
+        <>
       {/* Track Info */}
       {trackInfo && (
         <div className="dashboard-grid">
@@ -431,6 +598,8 @@ export default function SegmentsPage() {
             Set start and end distances above to analyze driver performance through that segment.
           </p>
         </div>
+      )}
+        </>
       )}
     </div>
   );
