@@ -5,7 +5,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://your-backend-url.railway.app/api/:path*"
+      "destination": "https://apexanalyst-production.up.railway.app/api/:path*"
     }
   ]
 }
