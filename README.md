@@ -95,9 +95,7 @@ streamlit run app.py
 
 ### 3. Weather Correlation (The Rain Impact)
 - **Data Sources:** FastF1 weather data
-- **Features:**
-  - Temperature evolution plots
-  - Lap time vs track temperature correlation
+-  - Lap time vs track temperature correlation
   - Quantified impact metrics (Δ time per 1°C change)
   - Humidity and wind analysis
 
