@@ -1,0 +1,190 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --f1-red: #E10600;
+  --f1-black: #15151E;
+  --f1-dark: #1E1E2E;
+  --f1-gray: #38383F;
+  --f1-light: #F5F5F5;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Titillium Web', sans-serif;
+  background-color: var(--f1-black);
+  color: var(--f1-light);
+  min-height: 100vh;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--f1-dark);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--f1-gray);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--f1-red);
+}
+
+/* Data table styling */
+.apex-table {
+  @apply w-full border-collapse;
+}
+
+.apex-table th {
+  @apply px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider;
+  @apply bg-f1-dark text-f1-light border-b border-f1-gray;
+}
+
+.apex-table td {
+  @apply px-4 py-3 text-sm;
+  @apply border-b border-f1-gray/30;
+}
+
+.apex-table tbody tr:hover {
+  @apply bg-f1-gray/20;
+}
+
+/* Card component */
+.apex-card {
+  @apply bg-f1-dark rounded-xl border border-f1-gray/30;
+  @apply shadow-lg backdrop-blur-sm;
+}
+
+/* Button styles */
+.apex-btn {
+  @apply px-6 py-2.5 rounded-lg font-semibold;
+  @apply transition-all duration-200 ease-in-out;
+  @apply focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-f1-black;
+}
+
+.apex-btn-primary {
+  @apply bg-f1-red text-white hover:bg-red-600;
+  @apply focus:ring-f1-red;
+}
+
+.apex-btn-secondary {
+  @apply bg-f1-gray text-f1-light hover:bg-gray-600;
+  @apply focus:ring-f1-gray;
+}
+
+/* Input styles */
+.apex-input {
+  @apply w-full px-4 py-2.5 rounded-lg;
+  @apply bg-f1-dark border border-f1-gray/50;
+  @apply text-f1-light placeholder-gray-500;
+  @apply focus:outline-none focus:border-f1-red focus:ring-1 focus:ring-f1-red;
+  @apply transition-all duration-200;
+}
+
+.apex-select {
+  @apply apex-input cursor-pointer;
+  @apply appearance-none bg-no-repeat bg-right pr-10;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 0.5rem center;
+  background-size: 1.5em 1.5em;
+}
+
+/* Stat card glow effect */
+.stat-card {
+  @apply relative overflow-hidden;
+}
+
+.stat-card::before {
+  content: '';
+  @apply absolute inset-0 opacity-0 transition-opacity duration-300;
+  background: radial-gradient(circle at center, var(--f1-red) 0%, transparent 70%);
+}
+
+.stat-card:hover::before {
+  @apply opacity-10;
+}
+
+/* Loading spinner */
+.apex-spinner {
+  @apply animate-spin rounded-full border-4 border-f1-gray border-t-f1-red;
+}
+
+/* Plotly chart container */
+.plotly-chart-container {
+  @apply w-full rounded-lg overflow-hidden;
+}
+
+.plotly-chart-container .js-plotly-plot {
+  @apply w-full;
+}
+
+/* Tyre compound badges */
+.tyre-badge {
+  @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold;
+}
+
+.tyre-soft {
+  @apply bg-tyre-soft/20 text-tyre-soft border border-tyre-soft/50;
+}
+
+.tyre-medium {
+  @apply bg-tyre-medium/20 text-tyre-medium border border-tyre-medium/50;
+}
+
+.tyre-hard {
+  @apply bg-white/10 text-white border border-white/50;
+}
+
+.tyre-intermediate {
+  @apply bg-tyre-intermediate/20 text-tyre-intermediate border border-tyre-intermediate/50;
+}
+
+.tyre-wet {
+  @apply bg-tyre-wet/20 text-tyre-wet border border-tyre-wet/50;
+}
+
+/* Navigation active state */
+.nav-link {
+  @apply relative px-4 py-2 text-gray-400 hover:text-white transition-colors;
+}
+
+.nav-link.active {
+  @apply text-white;
+}
+
+.nav-link.active::after {
+  content: '';
+  @apply absolute bottom-0 left-0 right-0 h-0.5 bg-f1-red rounded-full;
+}
+
+/* Page transitions */
+.page-enter {
+  @apply opacity-0 translate-y-4;
+}
+
+.page-enter-active {
+  @apply opacity-100 translate-y-0 transition-all duration-300;
+}
+
+/* Responsive grid for dashboard */
+.dashboard-grid {
+  @apply grid gap-6;
+  @apply grid-cols-1 md:grid-cols-2 lg:grid-cols-4;
+}
+
+.chart-grid {
+  @apply grid gap-6;
+  @apply grid-cols-1 lg:grid-cols-2;
+}

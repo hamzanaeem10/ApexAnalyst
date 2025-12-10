@@ -2,6 +2,11 @@
 
 🏎️ A comprehensive, data-driven F1 analytics platform for race strategists, performance engineers, and driver coaches.
 
+![Apex Analyst](https://img.shields.io/badge/F1-Analytics-E10600?style=for-the-badge&logo=f1&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
+
 ## 🎯 Overview
 
 Apex Analyst integrates FastF1 and jolpica-f1 data to provide actionable insights across five key analytical modules:
@@ -12,34 +17,63 @@ Apex Analyst integrates FastF1 and jolpica-f1 data to provide actionable insight
 4. **Historical Strategy Analysis** - Learn from past race strategies
 5. **Circuit Segment Analysis** - Identify performance through specific track sections
 
+## 🛠️ Architecture
+
+This project now features a modern two-tier architecture:
+
+- **Backend**: FastAPI with Pydantic v2 for strict data contracts
+- **Frontend**: React with TypeScript, TanStack Query, and Tailwind CSS
+
 ## 🚀 Quick Start
 
 ### Prerequisites
 
-- Python 3.9+
-- pip package manager
+- Python 3.10+
+- Node.js 18+
+- npm or yarn
 
-### Installation
+### Backend Setup
 
-1. Clone or download this project
-
-2. Create a virtual environment (recommended):
 ```bash
+# Navigate to backend
+cd backend
+
+# Create virtual environment
 python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+source venv/bin/activate  # Windows: venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Run the server
+uvicorn app.main:app --reload --port 8000
 ```
 
-3. Install dependencies:
+API available at `http://localhost:8000` (Swagger docs at `/docs`)
+
+### Frontend Setup
+
+```bash
+# Navigate to frontend
+cd frontend
+
+# Install dependencies
+npm install
+
+# Run development server
+npm run dev
+```
+
+Frontend available at `http://localhost:3000`
+
+### Legacy Streamlit Version
+
+The original Streamlit app is still available:
+
 ```bash
 pip install -r requirements.txt
-```
-
-4. Run the application:
-```bash
 streamlit run app.py
 ```
-
-5. Open your browser to `http://localhost:8501`
 
 ## 📊 Modules
 
