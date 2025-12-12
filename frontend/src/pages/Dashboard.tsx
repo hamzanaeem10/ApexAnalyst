@@ -7,57 +7,51 @@ import Scene from '../components/three/Scene';
 const modules = [
   {
     path: '/telemetry',
-    title: 'Telemetry',
-    subtitle: 'Live Data Analysis',
-    description: 'Compare speed, throttle, brake, and gear data between drivers lap-by-lap',
+    title: 'TELEMETRY',
+    subtitle: 'LIVE DATA',
+    description: 'Speed, throttle, brake traces — driver comparison lap-by-lap',
     icon: Activity,
-    gradient: 'from-red-500 to-orange-600',
-    bgGradient: 'from-red-500/10 to-orange-600/5',
+    accentColor: 'var(--apex-red)',
   },
   {
     path: '/lap-analysis',
-    title: 'Lap Times',
-    subtitle: 'Performance Tracking',
-    description: 'Track lap time evolution, sector times, and tyre degradation patterns',
+    title: 'LAP TIMES',
+    subtitle: 'PERFORMANCE',
+    description: 'Lap evolution, sector splits, tyre degradation curves',
     icon: Timer,
-    gradient: 'from-blue-500 to-cyan-600',
-    bgGradient: 'from-blue-500/10 to-cyan-600/5',
+    accentColor: 'var(--apex-cyan)',
   },
   {
     path: '/weather',
-    title: 'Weather',
-    subtitle: 'Conditions Impact',
-    description: 'Analyze how weather conditions correlate with driver performance',
+    title: 'WEATHER',
+    subtitle: 'CONDITIONS',
+    description: 'Track temp, humidity correlation with pace delta',
     icon: Cloud,
-    gradient: 'from-emerald-500 to-teal-600',
-    bgGradient: 'from-emerald-500/10 to-teal-600/5',
+    accentColor: 'var(--apex-green)',
   },
   {
     path: '/strategy',
-    title: 'Strategy',
-    subtitle: 'Pit & Tyre Analysis',
-    description: 'Historical pit stop strategies, compound usage, and timing analysis',
+    title: 'STRATEGY',
+    subtitle: 'PIT WALL',
+    description: 'Compound stints, pit windows, undercut/overcut analysis',
     icon: Target,
-    gradient: 'from-amber-500 to-yellow-600',
-    bgGradient: 'from-amber-500/10 to-yellow-600/5',
+    accentColor: 'var(--apex-yellow)',
   },
   {
     path: '/segments',
-    title: 'Segments',
-    subtitle: 'Mini-Sector Analysis',
-    description: 'Mini-sector analysis comparing corner speeds and straight-line pace',
+    title: 'SEGMENTS',
+    subtitle: 'MICRO-SECTORS',
+    description: 'Corner-by-corner breakdown, apex speeds, braking zones',
     icon: Layers,
-    gradient: 'from-purple-500 to-pink-600',
-    bgGradient: 'from-purple-500/10 to-pink-600/5',
+    accentColor: 'var(--apex-orange)',
   },
   {
     path: '/race-analysis',
-    title: 'Race Analysis',
-    subtitle: 'Full Race Review',
-    description: 'Comprehensive race analysis with position changes and key moments',
+    title: 'RACE',
+    subtitle: 'FULL REVIEW',
+    description: 'Position changes, key moments, race pace analysis',
     icon: Gauge,
-    gradient: 'from-indigo-500 to-violet-600',
-    bgGradient: 'from-indigo-500/10 to-violet-600/5',
+    accentColor: 'var(--apex-blue)',
   },
 ];
 
@@ -66,124 +60,125 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-12">
-      {/* Hero Section - Inspired by Ferrari SF-24 Launch */}
-      <div className="relative min-h-[600px] rounded-[2rem] overflow-hidden bg-[#0D0D12] border border-white/5 flex flex-col group">
+      {/* Hero Section - Pit Wall Monitor Aesthetic */}
+      <div className="relative min-h-[600px] overflow-hidden bg-apex-carbon border border-apex-chrome/30 flex flex-col group" style={{ clipPath: 'polygon(0 0, 100% 0, 100% calc(100% - 24px), calc(100% - 24px) 100%, 0 100%)' }}>
         {/* 3D Scene Background */}
-        <div className="absolute inset-0 z-0 opacity-80 transition-opacity duration-700 group-hover:opacity-100">
+        <div className="absolute inset-0 z-0 opacity-70 transition-opacity duration-700 group-hover:opacity-90">
           <Scene />
         </div>
 
-        {/* Background Effects */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(225,6,0,0.1),transparent_70%)] pointer-events-none z-0" />
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:100px_100px] opacity-10 pointer-events-none z-0" />
+        {/* Scan line effect */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none z-[5]">
+          <div className="absolute inset-0 w-1/2 h-full bg-gradient-to-r from-transparent via-apex-cyan/5 to-transparent animate-scan" />
+        </div>
         
-        {/* Top Bar */}
-        <div className="relative z-10 flex items-center justify-between p-8 md:p-10">
-          <div className="flex items-center gap-4 text-sm font-medium tracking-widest text-gray-500 uppercase">
-            <span className="text-f1-red">Season 2025</span>
-            <span>•</span>
-            <span>Apex Analyst v2.0</span>
+        {/* Top Bar - Status Strip */}
+        <div className="relative z-10 flex items-center justify-between px-8 py-4 border-b border-apex-chrome/20 bg-apex-void/60 backdrop-blur-sm">
+          <div className="flex items-center gap-6 font-mono text-xs tracking-widest text-apex-chrome uppercase">
+            <span className="text-apex-red font-bold">SYS::2025</span>
+            <span className="text-apex-chrome/50">|</span>
+            <span>APEX_ANALYST_v2.0</span>
           </div>
-          <div className="flex items-center gap-4">
-            <div className="w-2 h-2 rounded-full bg-f1-red animate-pulse" />
-            <span className="text-xs font-bold tracking-widest text-white uppercase">System Online</span>
+          <div className="flex items-center gap-3">
+            <div className="w-1.5 h-1.5 bg-apex-green animate-pulse" />
+            <span className="font-mono text-[10px] font-bold tracking-[0.2em] text-apex-green uppercase">ONLINE</span>
           </div>
         </div>
 
         {/* Main Content */}
-        <div className="relative z-10 flex-1 flex flex-col items-center justify-center text-center px-4">
+        <div className="relative z-10 flex-1 flex flex-col items-center justify-center text-center px-4 py-12">
           {currentSession ? (
             <>
-              <div className="mb-4 flex items-center gap-2 px-4 py-1.5 rounded-full bg-f1-red/10 border border-f1-red/20 backdrop-blur-sm">
-                <Radio className="w-3 h-3 text-f1-red animate-pulse" />
-                <span className="text-xs font-bold text-f1-red uppercase tracking-wider">Live Session Data</span>
+              <div className="mb-6 flex items-center gap-3 px-5 py-2 bg-apex-red/10 border border-apex-red/30">
+                <Radio className="w-3 h-3 text-apex-red animate-pulse" />
+                <span className="font-mono text-[10px] font-bold text-apex-red uppercase tracking-[0.3em]">SESSION ACTIVE</span>
               </div>
-              <h1 className="text-6xl md:text-8xl lg:text-9xl font-black text-white tracking-tighter mb-2">
+              <h1 className="font-headline text-7xl md:text-9xl lg:text-[12rem] text-white tracking-tight leading-none mb-4 text-glow-subtle">
                 {currentSession.grand_prix.split(' ')[0].toUpperCase()}
               </h1>
-              <p className="text-xl md:text-2xl font-medium text-gray-400 tracking-widest uppercase">
-                {currentSession.session_name} • {currentSession.year}
+              <p className="font-mono text-lg md:text-xl text-apex-chrome tracking-[0.3em] uppercase">
+                {currentSession.session_name} // {currentSession.year}
               </p>
             </>
           ) : (
             <>
-              <div className="mb-4 flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm">
-                <Zap className="w-3 h-3 text-yellow-500" />
-                <span className="text-xs font-bold text-gray-300 uppercase tracking-wider">Next Gen Analytics</span>
+              <div className="mb-6 flex items-center gap-3 px-5 py-2 bg-apex-cyan/5 border border-apex-cyan/20">
+                <Zap className="w-3 h-3 text-apex-cyan" />
+                <span className="font-mono text-[10px] font-bold text-apex-cyan uppercase tracking-[0.3em]">RACE INTELLIGENCE</span>
               </div>
-              <h1 className="text-7xl md:text-9xl font-black text-white tracking-tighter mb-2">
-                APEX<span className="text-transparent bg-clip-text bg-gradient-to-r from-f1-red to-red-600">-25</span>
+              <h1 className="font-headline text-8xl md:text-[10rem] lg:text-[14rem] text-white tracking-tight leading-none mb-4">
+                APEX
               </h1>
-              <p className="text-xl md:text-2xl font-medium text-gray-400 tracking-widest uppercase">
-                Race Intelligence Platform
+              <p className="font-mono text-lg text-apex-chrome tracking-[0.3em] uppercase">
+                TELEMETRY // STRATEGY // ANALYSIS
               </p>
             </>
           )}
         </div>
 
-        {/* Tech Specs Row - The "Ferrari" inspired bottom bar */}
-        <div className="relative z-10 mt-auto border-t border-white/10 bg-black/20 backdrop-blur-md">
-          <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-white/10">
+        {/* Tech Specs Row - Data Strip */}
+        <div className="relative z-10 mt-auto border-t border-apex-chrome/20 bg-apex-void/80 backdrop-blur-md">
+          <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-apex-chrome/20">
             {currentSession ? (
               <>
-                <div className="p-6 md:p-8 group hover:bg-white/5 transition-colors">
-                  <div className="flex items-center gap-3 mb-2 text-gray-500 group-hover:text-f1-red transition-colors">
-                    <Map className="w-5 h-5" />
-                    <span className="text-xs font-bold uppercase tracking-wider">Circuit</span>
+                <div className="p-5 md:p-6 group/stat hover:bg-apex-red/5 transition-colors">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Map className="w-4 h-4 text-apex-chrome/60 group-hover/stat:text-apex-red transition-colors" />
+                    <span className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-apex-chrome/60">CIRCUIT</span>
                   </div>
-                  <p className="text-lg md:text-xl font-bold text-white">{currentSession.track_data.track_name}</p>
+                  <p className="font-mono text-sm md:text-base font-bold text-white truncate">{currentSession.track_data.track_name}</p>
                 </div>
-                <div className="p-6 md:p-8 group hover:bg-white/5 transition-colors">
-                  <div className="flex items-center gap-3 mb-2 text-gray-500 group-hover:text-blue-500 transition-colors">
-                    <Users className="w-5 h-5" />
-                    <span className="text-xs font-bold uppercase tracking-wider">Grid</span>
+                <div className="p-5 md:p-6 group/stat hover:bg-apex-cyan/5 transition-colors">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Users className="w-4 h-4 text-apex-chrome/60 group-hover/stat:text-apex-cyan transition-colors" />
+                    <span className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-apex-chrome/60">GRID</span>
                   </div>
-                  <p className="text-lg md:text-xl font-bold text-white">{currentSession.drivers.length} Drivers</p>
+                  <p className="font-mono text-sm md:text-base font-bold text-white">{currentSession.drivers.length} <span className="text-apex-chrome/60 text-xs">DRV</span></p>
                 </div>
-                <div className="p-6 md:p-8 group hover:bg-white/5 transition-colors">
-                  <div className="flex items-center gap-3 mb-2 text-gray-500 group-hover:text-yellow-500 transition-colors">
-                    <Flag className="w-5 h-5" />
-                    <span className="text-xs font-bold uppercase tracking-wider">Teams</span>
+                <div className="p-5 md:p-6 group/stat hover:bg-apex-yellow/5 transition-colors">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Flag className="w-4 h-4 text-apex-chrome/60 group-hover/stat:text-apex-yellow transition-colors" />
+                    <span className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-apex-chrome/60">TEAMS</span>
                   </div>
-                  <p className="text-lg md:text-xl font-bold text-white">{currentSession.teams.length} Teams</p>
+                  <p className="font-mono text-sm md:text-base font-bold text-white">{currentSession.teams.length} <span className="text-apex-chrome/60 text-xs">ENT</span></p>
                 </div>
-                <div className="p-6 md:p-8 group hover:bg-white/5 transition-colors">
-                  <div className="flex items-center gap-3 mb-2 text-gray-500 group-hover:text-green-500 transition-colors">
-                    <TrendingUp className="w-5 h-5" />
-                    <span className="text-xs font-bold uppercase tracking-wider">Length</span>
+                <div className="p-5 md:p-6 group/stat hover:bg-apex-green/5 transition-colors">
+                  <div className="flex items-center gap-2 mb-2">
+                    <TrendingUp className="w-4 h-4 text-apex-chrome/60 group-hover/stat:text-apex-green transition-colors" />
+                    <span className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-apex-chrome/60">LENGTH</span>
                   </div>
-                  <p className="text-lg md:text-xl font-bold text-white">{(currentSession.track_data.track_length / 1000).toFixed(3)} KM</p>
+                  <p className="font-mono text-sm md:text-base font-bold text-white">{(currentSession.track_data.track_length / 1000).toFixed(3)} <span className="text-apex-chrome/60 text-xs">KM</span></p>
                 </div>
               </>
             ) : (
               <>
-                <div className="p-6 md:p-8 group hover:bg-white/5 transition-colors">
-                  <div className="flex items-center gap-3 mb-2 text-gray-500 group-hover:text-f1-red transition-colors">
-                    <Activity className="w-5 h-5" />
-                    <span className="text-xs font-bold uppercase tracking-wider">Telemetry</span>
+                <div className="p-5 md:p-6 group/stat hover:bg-apex-red/5 transition-colors">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Activity className="w-4 h-4 text-apex-chrome/60 group-hover/stat:text-apex-red transition-colors" />
+                    <span className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-apex-chrome/60">TELEMETRY</span>
                   </div>
-                  <p className="text-lg md:text-xl font-bold text-white">Real-time Data</p>
+                  <p className="font-mono text-sm font-bold text-white">REAL-TIME</p>
                 </div>
-                <div className="p-6 md:p-8 group hover:bg-white/5 transition-colors">
-                  <div className="flex items-center gap-3 mb-2 text-gray-500 group-hover:text-blue-500 transition-colors">
-                    <Target className="w-5 h-5" />
-                    <span className="text-xs font-bold uppercase tracking-wider">Strategy</span>
+                <div className="p-5 md:p-6 group/stat hover:bg-apex-cyan/5 transition-colors">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Target className="w-4 h-4 text-apex-chrome/60 group-hover/stat:text-apex-cyan transition-colors" />
+                    <span className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-apex-chrome/60">STRATEGY</span>
                   </div>
-                  <p className="text-lg md:text-xl font-bold text-white">Race Prediction</p>
+                  <p className="font-mono text-sm font-bold text-white">PREDICTIVE</p>
                 </div>
-                <div className="p-6 md:p-8 group hover:bg-white/5 transition-colors">
-                  <div className="flex items-center gap-3 mb-2 text-gray-500 group-hover:text-yellow-500 transition-colors">
-                    <Cloud className="w-5 h-5" />
-                    <span className="text-xs font-bold uppercase tracking-wider">Weather</span>
+                <div className="p-5 md:p-6 group/stat hover:bg-apex-yellow/5 transition-colors">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Cloud className="w-4 h-4 text-apex-chrome/60 group-hover/stat:text-apex-yellow transition-colors" />
+                    <span className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-apex-chrome/60">WEATHER</span>
                   </div>
-                  <p className="text-lg md:text-xl font-bold text-white">Impact Analysis</p>
+                  <p className="font-mono text-sm font-bold text-white">ANALYSIS</p>
                 </div>
-                <div className="p-6 md:p-8 group hover:bg-white/5 transition-colors">
-                  <div className="flex items-center gap-3 mb-2 text-gray-500 group-hover:text-green-500 transition-colors">
-                    <Layers className="w-5 h-5" />
-                    <span className="text-xs font-bold uppercase tracking-wider">Segments</span>
+                <div className="p-5 md:p-6 group/stat hover:bg-apex-green/5 transition-colors">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Layers className="w-4 h-4 text-apex-chrome/60 group-hover/stat:text-apex-green transition-colors" />
+                    <span className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-apex-chrome/60">SEGMENTS</span>
                   </div>
-                  <p className="text-lg md:text-xl font-bold text-white">Micro-Sectors</p>
+                  <p className="font-mono text-sm font-bold text-white">MICRO-SEC</p>
                 </div>
               </>
             )}
@@ -196,52 +191,53 @@ export default function Dashboard() {
         <SessionSelector />
       </div>
 
-      {/* Module Cards */}
+      {/* Module Cards - Industrial Grid */}
       <div className="page-section">
         <div className="flex items-center gap-4 mb-8">
-          <div className="h-8 w-1 bg-f1-red rounded-full" />
-          <h2 className="text-2xl font-bold text-white uppercase tracking-wide">Analysis Modules</h2>
+          <div className="h-6 w-1 bg-apex-red" />
+          <h2 className="font-display text-xl font-bold text-white uppercase tracking-[0.2em]">Analysis Modules</h2>
+          <div className="flex-1 h-px bg-apex-chrome/20" />
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {modules.map((module) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {modules.map((module, index) => (
             <Link
               key={module.path}
               to={module.path}
-              className="group relative apex-card p-8 hover:border-white/20 transition-all duration-500"
+              className="group relative apex-card p-0 overflow-hidden"
+              style={{ animationDelay: `${index * 0.1}s` }}
             >
-              {/* Background gradient on hover */}
-              <div className={`absolute inset-0 bg-gradient-to-br ${module.bgGradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl`} />
+              {/* Top accent bar */}
+              <div className="h-0.5 w-full" style={{ backgroundColor: module.accentColor }} />
               
-              <div className="relative z-10">
-                {/* Icon */}
-                <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${module.gradient} flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
-                  <module.icon className="w-7 h-7 text-white" />
+              <div className="p-6">
+                {/* Header */}
+                <div className="flex items-start justify-between mb-4">
+                  <div className="w-10 h-10 flex items-center justify-center border border-apex-chrome/30 group-hover:border-opacity-60 transition-colors" style={{ color: module.accentColor }}>
+                    <module.icon className="w-5 h-5" />
+                  </div>
+                  <span className="font-mono text-[9px] font-bold tracking-[0.2em] text-apex-chrome/40 uppercase">{module.subtitle}</span>
                 </div>
 
-                {/* Content */}
-                <div className="space-y-2 mb-6">
-                  <p className="text-xs font-bold uppercase tracking-wider text-gray-500">{module.subtitle}</p>
-                  <h3 className="text-xl font-bold text-white group-hover:text-f1-red transition-colors">
-                    {module.title}
-                  </h3>
-                </div>
+                {/* Title */}
+                <h3 className="font-display text-xl font-bold text-white mb-3 group-hover:text-opacity-100 transition-colors" style={{ ['--hover-color' as string]: module.accentColor }}>
+                  {module.title}
+                </h3>
 
-                <p className="text-gray-400 text-sm leading-relaxed mb-6">
+                {/* Description */}
+                <p className="font-mono text-xs text-apex-chrome/70 leading-relaxed mb-6">
                   {module.description}
                 </p>
 
                 {/* Action */}
-                <div className="flex items-center gap-2 text-f1-red text-sm font-bold uppercase tracking-wider opacity-0 group-hover:opacity-100 translate-x-0 group-hover:translate-x-2 transition-all duration-300">
-                  <span>Explore</span>
-                  <ArrowRight className="w-4 h-4" />
+                <div className="flex items-center gap-2 font-mono text-[10px] font-bold uppercase tracking-[0.2em] opacity-0 group-hover:opacity-100 transition-all duration-300" style={{ color: module.accentColor }}>
+                  <span>ENTER</span>
+                  <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
                 </div>
               </div>
 
-              {/* Corner accent */}
-              <div className="absolute top-0 right-0 w-20 h-20 overflow-hidden rounded-tr-2xl">
-                <div className={`absolute -top-10 -right-10 w-20 h-20 bg-gradient-to-br ${module.gradient} opacity-0 group-hover:opacity-20 transition-opacity duration-300 rotate-45`} />
-              </div>
+              {/* Hover glow effect */}
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${module.accentColor}10, transparent 70%)` }} />
             </Link>
           ))}
         </div>

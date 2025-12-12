@@ -1,20 +1,51 @@
+/* 
+  APEX ANALYST - MOTORSPORT TELEMETRY AESTHETIC
+  Inspired by: F1 broadcast graphics, racing HUDs, pit wall monitors
+  Typography: Orbitron (technical/futuristic) + JetBrains Mono (data)
+*/
+
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500;600;700&family=Bebas+Neue&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
-
 :root {
-  --f1-red: #E10600;
-  --f1-red-glow: rgba(225, 6, 0, 0.4);
-  --f1-black: #0D0D12;
-  --f1-dark: #151520;
-  --f1-darker: #0A0A0F;
-  --f1-gray: #2A2A35;
-  --f1-light: #F5F5F5;
-  --f1-accent: #FF1E1E;
-  --glass-bg: rgba(21, 21, 32, 0.7);
-  --glass-border: rgba(255, 255, 255, 0.08);
+  /* Core palette - Carbon fiber & brake glow */
+  --apex-void: #050507;
+  --apex-carbon: #0C0C0E;
+  --apex-graphite: #141418;
+  --apex-steel: #1E1E24;
+  --apex-chrome: #2A2A32;
+  
+  /* Signal colors - Racing telemetry */
+  --apex-red: #FF0A0A;
+  --apex-red-dim: #CC0808;
+  --apex-orange: #FF6B00;
+  --apex-yellow: #FFD600;
+  --apex-green: #00FF6A;
+  --apex-cyan: #00E5FF;
+  --apex-blue: #0066FF;
+  
+  /* Text hierarchy */
+  --text-primary: #FFFFFF;
+  --text-secondary: #8B8B9A;
+  --text-tertiary: #4A4A58;
+  --text-data: #00FF6A;
+  
+  /* Glow intensities */
+  --glow-red: rgba(255, 10, 10, 0.6);
+  --glow-cyan: rgba(0, 229, 255, 0.4);
+  --glow-green: rgba(0, 255, 106, 0.4);
+  
+  /* Scan line effect */
+  --scanline: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.1) 2px,
+    rgba(0, 0, 0, 0.1) 4px
+  );
 }
 
 * {
@@ -28,98 +59,166 @@ html {
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  background-color: var(--f1-black);
-  color: var(--f1-light);
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  background-color: var(--apex-void);
+  color: var(--text-primary);
   min-height: 100vh;
+  font-feature-settings: 'tnum' on, 'lnum' on;
+  letter-spacing: 0.02em;
+  
+  /* Layered atmospheric background */
   background-image: 
-    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(225, 6, 0, 0.15), transparent),
-    radial-gradient(ellipse 60% 40% at 100% 100%, rgba(225, 6, 0, 0.08), transparent);
+    /* Top left corner accent */
+    radial-gradient(ellipse 40% 30% at 0% 0%, rgba(255, 10, 10, 0.08), transparent),
+    /* Bottom right data glow */
+    radial-gradient(ellipse 50% 40% at 100% 100%, rgba(0, 229, 255, 0.05), transparent),
+    /* Center subtle warmth */
+    radial-gradient(ellipse 80% 60% at 50% 50%, rgba(30, 30, 36, 0.8), transparent),
+    /* Noise texture simulation */
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
   background-attachment: fixed;
 }
 
-/* Custom scrollbar */
+/* Headlines - Orbitron for that racing feel */
+h1, h2, h3, .heading {
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* Large display numbers - Bebas Neue */
+.display-number {
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 0.02em;
+}
+
+/* Custom scrollbar - Minimal racing stripe */
 ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--f1-darker);
+  background: var(--apex-void);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, var(--f1-gray) 0%, #1f1f2a 100%);
-  border-radius: 5px;
-  border: 2px solid var(--f1-darker);
+  background: linear-gradient(180deg, var(--apex-red) 0%, var(--apex-red-dim) 100%);
+  border-radius: 0;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, var(--f1-red) 0%, #b30500 100%);
+  background: var(--apex-red);
+  box-shadow: 0 0 10px var(--glow-red);
 }
 
-/* Modern glass card */
+/* ═══════════════════════════════════════════════════════
+   APEX CARD - Pit wall monitor style
+   ═══════════════════════════════════════════════════════ */
 .apex-card {
-  @apply relative rounded-2xl overflow-hidden;
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  @apply relative overflow-hidden;
+  background: linear-gradient(135deg, var(--apex-graphite) 0%, var(--apex-carbon) 100%);
+  border: 1px solid var(--apex-chrome);
+  border-radius: 4px;
+  
+  /* Corner cuts for that technical look */
+  clip-path: polygon(
+    0 12px, 12px 0, 100% 0, 100% calc(100% - 12px), 
+    calc(100% - 12px) 100%, 0 100%
+  );
+  
   box-shadow: 
-    0 4px 30px rgba(0, 0, 0, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.05);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    inset 0 1px 0 rgba(255, 255, 255, 0.03),
+    0 4px 24px rgba(0, 0, 0, 0.5);
+  
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-.apex-card:hover {
-  border-color: rgba(225, 6, 0, 0.3);
-  box-shadow: 
-    0 8px 40px rgba(0, 0, 0, 0.4),
-    0 0 60px rgba(225, 6, 0, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  transform: translateY(-2px);
-}
-
+/* Corner accent markers */
 .apex-card::before {
   content: '';
   position: absolute;
   top: 0;
-  left: 0;
+  left: 12px;
   right: 0;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  background: linear-gradient(90deg, var(--apex-red) 0%, transparent 50%);
 }
 
-/* Data table styling */
+.apex-card::after {
+  content: '';
+  position: absolute;
+  top: 12px;
+  left: 0;
+  width: 1px;
+  height: calc(100% - 12px);
+  background: linear-gradient(180deg, var(--apex-red) 0%, transparent 30%);
+}
+
+.apex-card:hover {
+  border-color: var(--apex-red);
+  box-shadow: 
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 8px 32px rgba(0, 0, 0, 0.6),
+    0 0 40px rgba(255, 10, 10, 0.1);
+  transform: translateY(-1px);
+}
+
+/* ═══════════════════════════════════════════════════════
+   DATA TABLE - Telemetry readout style
+   ═══════════════════════════════════════════════════════ */
 .apex-table {
   @apply w-full border-collapse;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
 }
 
 .apex-table th {
-  @apply px-5 py-4 text-left text-xs font-bold uppercase tracking-widest;
-  background: linear-gradient(180deg, rgba(42, 42, 53, 0.8) 0%, rgba(21, 21, 32, 0.8) 100%);
-  color: rgba(255, 255, 255, 0.7);
-  border-bottom: 2px solid var(--f1-red);
+  @apply px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-[0.2em];
+  font-family: 'Orbitron', sans-serif;
+  background: var(--apex-carbon);
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--apex-red);
+  position: relative;
+}
+
+.apex-table th::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, var(--apex-red), transparent);
 }
 
 .apex-table td {
-  @apply px-5 py-4 text-sm;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  @apply px-4 py-3;
+  border-bottom: 1px solid var(--apex-steel);
+  transition: all 0.15s ease;
 }
 
 .apex-table tbody tr {
-  @apply transition-all duration-200;
+  @apply transition-all duration-150;
 }
 
 .apex-table tbody tr:hover {
-  background: linear-gradient(90deg, rgba(225, 6, 0, 0.1), transparent);
+  background: linear-gradient(90deg, rgba(255, 10, 10, 0.08) 0%, transparent 100%);
 }
 
-/* Button styles */
+.apex-table tbody tr:hover td {
+  color: var(--text-primary);
+}
+
+/* ═══════════════════════════════════════════════════════
+   BUTTONS - Racing control style
+   ═══════════════════════════════════════════════════════ */
 .apex-btn {
-  @apply relative px-7 py-3 rounded-xl font-bold text-sm uppercase tracking-wider;
-  @apply transition-all duration-300 ease-out;
-  @apply focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-f1-black;
+  @apply relative px-6 py-3 text-[11px] font-semibold uppercase tracking-[0.15em];
+  font-family: 'Orbitron', sans-serif;
+  border-radius: 2px;
+  transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
   overflow: hidden;
 }
 
@@ -127,188 +226,440 @@ body {
   content: '';
   position: absolute;
   top: 0;
-  left: -100%;
+  left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.5s ease;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.1) 50%, transparent 100%);
+  transform: translateX(-100%);
+  transition: transform 0.4s ease;
 }
 
 .apex-btn:hover::before {
-  left: 100%;
+  transform: translateX(100%);
 }
 
 .apex-btn-primary {
-  background: linear-gradient(135deg, #E10600 0%, #b30500 100%);
-  @apply text-white;
-  box-shadow: 0 4px 20px rgba(225, 6, 0, 0.4);
+  background: var(--apex-red);
+  color: white;
+  border: none;
+  box-shadow: 
+    0 0 20px rgba(255, 10, 10, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  
+  /* Diagonal stripe accent */
+  background-image: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 10px,
+    rgba(0, 0, 0, 0.1) 10px,
+    rgba(0, 0, 0, 0.1) 20px
+  );
 }
 
 .apex-btn-primary:hover {
-  background: linear-gradient(135deg, #ff1a1a 0%, #E10600 100%);
-  box-shadow: 0 6px 30px rgba(225, 6, 0, 0.6);
-  transform: translateY(-2px);
+  background-color: #FF2020;
+  box-shadow: 
+    0 0 30px rgba(255, 10, 10, 0.5),
+    0 4px 20px rgba(255, 10, 10, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
 }
 
 .apex-btn-primary:active {
   transform: translateY(0);
+  box-shadow: 0 0 15px rgba(255, 10, 10, 0.4);
 }
 
 .apex-btn-secondary {
-  background: linear-gradient(135deg, rgba(42, 42, 53, 0.8) 0%, rgba(30, 30, 40, 0.8) 100%);
-  @apply text-white;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--apex-chrome);
 }
 
 .apex-btn-secondary:hover {
-  background: linear-gradient(135deg, rgba(52, 52, 63, 0.9) 0%, rgba(40, 40, 50, 0.9) 100%);
-  border-color: rgba(225, 6, 0, 0.5);
+  color: var(--text-primary);
+  border-color: var(--apex-cyan);
+  box-shadow: 0 0 15px var(--glow-cyan);
 }
 
-/* Input styles */
+/* ═══════════════════════════════════════════════════════
+   INPUTS - Data entry terminals
+   ═══════════════════════════════════════════════════════ */
 .apex-input {
-  @apply w-full px-5 py-3 rounded-xl;
-  background: rgba(21, 21, 32, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  @apply text-white placeholder-gray-500;
-  @apply transition-all duration-300;
+  @apply w-full px-4 py-3;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  background: var(--apex-carbon);
+  border: 1px solid var(--apex-steel);
+  border-radius: 2px;
+  color: var(--text-primary);
+  transition: all 0.2s ease;
+}
+
+.apex-input::placeholder {
+  color: var(--text-tertiary);
+  font-style: italic;
 }
 
 .apex-input:focus {
-  @apply outline-none;
-  border-color: var(--f1-red);
-  box-shadow: 0 0 20px rgba(225, 6, 0, 0.2);
+  outline: none;
+  border-color: var(--apex-cyan);
+  box-shadow: 
+    0 0 0 1px var(--apex-cyan),
+    0 0 20px var(--glow-cyan);
 }
 
 .apex-select {
-  @apply apex-input cursor-pointer;
-  @apply appearance-none bg-no-repeat pr-12;
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23E10600' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-  background-position: right 1rem center;
-  background-size: 1.25em 1.25em;
+  @apply apex-input cursor-pointer appearance-none pr-10;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23FF0A0A' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
 }
 
 .apex-select option {
-  background: var(--f1-dark);
-  color: white;
+  background: var(--apex-carbon);
+  color: var(--text-primary);
   padding: 12px;
 }
 
-/* Stat card with glow effect */
+/* ═══════════════════════════════════════════════════════
+   STAT CARDS - Telemetry data displays
+   ═══════════════════════════════════════════════════════ */
 .stat-card {
-  @apply relative overflow-hidden;
+  @apply relative overflow-hidden p-4;
+  background: var(--apex-graphite);
+  border-left: 2px solid var(--apex-cyan);
 }
 
-.stat-card::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, transparent, var(--f1-red), transparent);
-  opacity: 0;
-  transition: opacity 0.3s ease;
+.stat-card .stat-value {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.5rem;
+  color: var(--apex-cyan);
+  line-height: 1;
+  text-shadow: 0 0 20px var(--glow-cyan);
 }
 
-.stat-card:hover::after {
-  opacity: 1;
+.stat-card .stat-label {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--text-tertiary);
 }
 
-/* Loading spinner */
+/* ═══════════════════════════════════════════════════════
+   LOADING STATES - Race start sequence
+   ═══════════════════════════════════════════════════════ */
 .apex-spinner {
-  @apply rounded-full;
-  border: 3px solid rgba(225, 6, 0, 0.2);
-  border-top-color: var(--f1-red);
-  animation: spin 0.8s linear infinite;
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--apex-steel);
+  border-top-color: var(--apex-red);
+  border-radius: 0;
+  animation: spin-square 0.8s steps(4) infinite;
 }
 
-@keyframes spin {
+@keyframes spin-square {
   to { transform: rotate(360deg); }
 }
 
-/* Plotly chart container */
+/* Pulse animation for live data */
+.pulse-live {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { 
+    box-shadow: 0 0 5px var(--apex-green);
+    opacity: 1;
+  }
+  50% { 
+    box-shadow: 0 0 20px var(--apex-green), 0 0 30px var(--glow-green);
+    opacity: 0.8;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+   CHART CONTAINERS - Data visualization frames
+   ═══════════════════════════════════════════════════════ */
 .plotly-chart-container {
-  @apply w-full rounded-xl overflow-hidden;
-  background: rgba(21, 21, 32, 0.5);
+  @apply w-full overflow-hidden;
+  background: var(--apex-carbon);
+  border: 1px solid var(--apex-steel);
+  border-radius: 2px;
+  position: relative;
+}
+
+/* Grid overlay effect */
+.plotly-chart-container::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(var(--apex-steel) 1px, transparent 1px),
+    linear-gradient(90deg, var(--apex-steel) 1px, transparent 1px);
+  background-size: 40px 40px;
+  opacity: 0.1;
+  pointer-events: none;
+  z-index: 1;
 }
 
 .plotly-chart-container .js-plotly-plot {
   @apply w-full;
+  position: relative;
+  z-index: 2;
 }
 
-/* Tyre compound badges */
+/* ═══════════════════════════════════════════════════════
+   TYRE COMPOUND BADGES - Pirelli style
+   ═══════════════════════════════════════════════════════ */
 .tyre-badge {
-  @apply inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  @apply inline-flex items-center px-3 py-1 text-[10px] font-bold uppercase;
+  font-family: 'Orbitron', sans-serif;
+  letter-spacing: 0.1em;
+  border-radius: 0;
+  border: 1px solid currentColor;
 }
 
 .tyre-soft {
-  background: linear-gradient(135deg, rgba(255, 0, 0, 0.25) 0%, rgba(255, 0, 0, 0.1) 100%);
-  @apply text-tyre-soft border border-tyre-soft/50;
+  color: #FF0000;
+  background: rgba(255, 0, 0, 0.15);
+  text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
 }
 
 .tyre-medium {
-  background: linear-gradient(135deg, rgba(255, 195, 0, 0.25) 0%, rgba(255, 195, 0, 0.1) 100%);
-  @apply text-tyre-medium border border-tyre-medium/50;
+  color: #FFD600;
+  background: rgba(255, 214, 0, 0.15);
+  text-shadow: 0 0 10px rgba(255, 214, 0, 0.5);
 }
 
 .tyre-hard {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%);
-  @apply text-white border border-white/30;
+  color: #FFFFFF;
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .tyre-intermediate {
-  background: linear-gradient(135deg, rgba(57, 181, 74, 0.25) 0%, rgba(57, 181, 74, 0.1) 100%);
-  @apply text-tyre-intermediate border border-tyre-intermediate/50;
+  color: #00FF6A;
+  background: rgba(0, 255, 106, 0.15);
+  text-shadow: 0 0 10px rgba(0, 255, 106, 0.5);
 }
 
 .tyre-wet {
-  background: linear-gradient(135deg, rgba(0, 174, 239, 0.25) 0%, rgba(0, 174, 239, 0.1) 100%);
-  @apply text-tyre-wet border border-tyre-wet/50;
+  color: #00E5FF;
+  background: rgba(0, 229, 255, 0.15);
+  text-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
 }
 
-/* Navigation styles */
+/* ═══════════════════════════════════════════════════════
+   NAVIGATION - Pit wall tabs
+   ═══════════════════════════════════════════════════════ */
 .nav-link {
-  @apply relative px-4 py-2.5 rounded-lg text-gray-400 font-medium;
-  @apply transition-all duration-300 ease-out;
+  @apply relative px-4 py-3 text-[11px] font-medium uppercase;
+  font-family: 'Orbitron', sans-serif;
+  letter-spacing: 0.1em;
+  color: var(--text-tertiary);
+  transition: all 0.2s ease;
+  border-bottom: 2px solid transparent;
 }
 
 .nav-link:hover {
-  @apply text-white;
-  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.02);
 }
 
 .nav-link.active {
-  @apply text-white;
-  background: linear-gradient(135deg, rgba(225, 6, 0, 0.2) 0%, rgba(225, 6, 0, 0.05) 100%);
+  color: var(--text-primary);
+  border-bottom-color: var(--apex-red);
+  background: linear-gradient(180deg, transparent 0%, rgba(255, 10, 10, 0.05) 100%);
 }
 
-.nav-link.active::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 3px;
-  height: 60%;
-  background: var(--f1-red);
-  border-radius: 0 2px 2px 0;
-}
-
-/* Hero text gradient */
+/* ═══════════════════════════════════════════════════════
+   TEXT UTILITIES - Display styles
+   ═══════════════════════════════════════════════════════ */
 .text-gradient {
-  background: linear-gradient(135deg, #E10600 0%, #ff4040 50%, #E10600 100%);
-  background-size: 200% auto;
+  background: linear-gradient(135deg, var(--apex-red) 0%, var(--apex-orange) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  animation: gradient-shift 3s ease infinite;
 }
 
-@keyframes gradient-shift {
-  0%, 100% { background-position: 0% center; }
-  50% { background-position: 100% center; }
+.text-data {
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--text-data);
+  font-variant-numeric: tabular-nums;
+}
+
+.text-label {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--text-tertiary);
+}
+
+/* ═══════════════════════════════════════════════════════
+   ANIMATIONS - Race sequence
+   ═══════════════════════════════════════════════════════ */
+
+/* Staggered reveal for page loads */
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: reveal 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+.reveal-delay-1 { animation-delay: 0.1s; }
+.reveal-delay-2 { animation-delay: 0.2s; }
+.reveal-delay-3 { animation-delay: 0.3s; }
+.reveal-delay-4 { animation-delay: 0.4s; }
+.reveal-delay-5 { animation-delay: 0.5s; }
+
+@keyframes reveal {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Data ticker effect */
+.ticker {
+  animation: ticker 0.3s steps(10) forwards;
+}
+
+@keyframes ticker {
+  from { opacity: 0.5; }
+  to { opacity: 1; }
+}
+
+/* Scan line sweep */
+.scan-line {
+  position: relative;
+  overflow: hidden;
+}
+
+.scan-line::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(0, 229, 255, 0.1), transparent);
+  animation: scan 3s ease-in-out infinite;
+}
+
+@keyframes scan {
+  0% { left: -50%; }
+  100% { left: 150%; }
+}
+
+/* Red alert flash */
+.alert-flash {
+  animation: alert 0.5s ease-in-out;
+}
+
+@keyframes alert {
+  0%, 100% { border-color: var(--apex-steel); }
+  50% { border-color: var(--apex-red); box-shadow: 0 0 20px var(--glow-red); }
+}
+
+/* ═══════════════════════════════════════════════════════
+   PAGE SECTIONS
+   ═══════════════════════════════════════════════════════ */
+.page-section {
+  @apply reveal;
+}
+
+/* Section headers with racing stripe */
+.section-header {
+  @apply flex items-center gap-4 mb-6;
+  font-family: 'Orbitron', sans-serif;
+}
+
+.section-header::before {
+  content: '';
+  width: 4px;
+  height: 24px;
+  background: linear-gradient(180deg, var(--apex-red) 0%, transparent 100%);
+}
+
+/* ═══════════════════════════════════════════════════════
+   SPECIAL EFFECTS
+   ═══════════════════════════════════════════════════════ */
+
+/* Glitch text effect for errors */
+.glitch {
+  position: relative;
+}
+
+.glitch::before,
+.glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.glitch::before {
+  animation: glitch-1 0.3s infinite;
+  color: var(--apex-cyan);
+  z-index: -1;
+}
+
+.glitch::after {
+  animation: glitch-2 0.3s infinite;
+  color: var(--apex-red);
+  z-index: -2;
+}
+
+@keyframes glitch-1 {
+  0%, 100% { clip-path: inset(0 0 0 0); transform: translate(0); }
+  20% { clip-path: inset(20% 0 60% 0); transform: translate(-2px, 2px); }
+  40% { clip-path: inset(40% 0 40% 0); transform: translate(2px, -2px); }
+  60% { clip-path: inset(60% 0 20% 0); transform: translate(-2px, 2px); }
+  80% { clip-path: inset(80% 0 0 0); transform: translate(2px, -2px); }
+}
+
+@keyframes glitch-2 {
+  0%, 100% { clip-path: inset(0 0 0 0); transform: translate(0); }
+  20% { clip-path: inset(80% 0 0 0); transform: translate(2px, -2px); }
+  40% { clip-path: inset(60% 0 20% 0); transform: translate(-2px, 2px); }
+  60% { clip-path: inset(40% 0 40% 0); transform: translate(2px, -2px); }
+  80% { clip-path: inset(20% 0 60% 0); transform: translate(-2px, 2px); }
+}
+
+/* Carbon fiber texture overlay */
+.carbon-texture {
+  background-image: 
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 0, 0, 0.1) 2px,
+      rgba(0, 0, 0, 0.1) 4px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 0, 0, 0.1) 2px,
+      rgba(0, 0, 0, 0.1) 4px
+    );
+}
+
+/* DRS zone indicator */
+.drs-active {
+  background: linear-gradient(90deg, var(--apex-green), var(--apex-cyan));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: drs-pulse 1s ease-in-out infinite;
+}
+
+@keyframes drs-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
 }
 
 /* Dashboard grid */
