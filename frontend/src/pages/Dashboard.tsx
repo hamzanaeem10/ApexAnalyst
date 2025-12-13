@@ -74,14 +74,14 @@ export default function Dashboard() {
         
         {/* Top Bar - Status Strip */}
         <div className="relative z-10 flex items-center justify-between px-8 py-4 border-b border-apex-chrome/20 bg-apex-void/60 backdrop-blur-sm">
-          <div className="flex items-center gap-6 font-mono text-xs tracking-widest text-apex-chrome uppercase">
+          <div className="flex items-center gap-6 text-xs font-semibold tracking-widest text-apex-chrome uppercase">
             <span className="text-apex-red font-bold">SYS::2025</span>
             <span className="text-apex-chrome/50">|</span>
             <span>APEX_ANALYST_v2.0</span>
           </div>
           <div className="flex items-center gap-3">
             <div className="w-1.5 h-1.5 bg-apex-green animate-pulse" />
-            <span className="font-mono text-[10px] font-bold tracking-[0.2em] text-apex-green uppercase">ONLINE</span>
+            <span className="text-[10px] font-bold tracking-widest text-apex-green uppercase">ONLINE</span>
           </div>
         </div>
 
@@ -91,12 +91,12 @@ export default function Dashboard() {
             <>
               <div className="mb-6 flex items-center gap-3 px-5 py-2 bg-apex-red/10 border border-apex-red/30">
                 <Radio className="w-3 h-3 text-apex-red animate-pulse" />
-                <span className="font-mono text-[10px] font-bold text-apex-red uppercase tracking-[0.3em]">SESSION ACTIVE</span>
+                <span className="text-[10px] font-bold text-apex-red uppercase tracking-widest">SESSION ACTIVE</span>
               </div>
               <h1 className="font-headline text-7xl md:text-9xl lg:text-[12rem] text-white tracking-tight leading-none mb-4 text-glow-subtle">
                 {currentSession.grand_prix.split(' ')[0].toUpperCase()}
               </h1>
-              <p className="font-mono text-lg md:text-xl text-apex-chrome tracking-[0.3em] uppercase">
+              <p className="text-lg md:text-xl font-medium text-apex-chrome tracking-widest uppercase">
                 {currentSession.session_name} // {currentSession.year}
               </p>
             </>
@@ -104,81 +104,81 @@ export default function Dashboard() {
             <>
               <div className="mb-6 flex items-center gap-3 px-5 py-2 bg-apex-cyan/5 border border-apex-cyan/20">
                 <Zap className="w-3 h-3 text-apex-cyan" />
-                <span className="font-mono text-[10px] font-bold text-apex-cyan uppercase tracking-[0.3em]">RACE INTELLIGENCE</span>
+                <span className="text-[10px] font-bold text-apex-cyan uppercase tracking-widest">RACE INTELLIGENCE</span>
               </div>
               <h1 className="font-headline text-8xl md:text-[10rem] lg:text-[14rem] text-white tracking-tight leading-none mb-4">
                 APEX
               </h1>
-              <p className="font-mono text-lg text-apex-chrome tracking-[0.3em] uppercase">
+              <p className="text-lg font-medium text-apex-chrome tracking-widest uppercase">
                 TELEMETRY // STRATEGY // ANALYSIS
               </p>
             </>
           )}
         </div>
 
-        {/* Tech Specs Row - Data Strip */}
-        <div className="relative z-10 mt-auto border-t border-apex-chrome/20 bg-apex-void/80 backdrop-blur-md">
-          <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-apex-chrome/20">
+        {/* Feature Strip - Clean & Readable */}
+        <div className="relative z-10 mt-auto border-t border-apex-chrome/20 bg-apex-void/90 backdrop-blur-md">
+          <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-apex-chrome/10">
             {currentSession ? (
               <>
-                <div className="p-5 md:p-6 group/stat hover:bg-apex-red/5 transition-colors">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Map className="w-4 h-4 text-apex-chrome/60 group-hover/stat:text-apex-red transition-colors" />
-                    <span className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-apex-chrome/60">CIRCUIT</span>
+                <div className="p-6 md:p-8 group/stat hover:bg-white/[0.02] transition-colors">
+                  <div className="flex items-center gap-2.5 mb-3">
+                    <Map className="w-4 h-4 text-apex-red/70" />
+                    <span className="text-[11px] font-semibold uppercase tracking-wider text-white/40">Circuit</span>
                   </div>
-                  <p className="font-mono text-sm md:text-base font-bold text-white truncate">{currentSession.track_data.track_name}</p>
+                  <p className="text-base md:text-lg font-semibold text-white">{currentSession.track_data.track_name}</p>
                 </div>
-                <div className="p-5 md:p-6 group/stat hover:bg-apex-cyan/5 transition-colors">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Users className="w-4 h-4 text-apex-chrome/60 group-hover/stat:text-apex-cyan transition-colors" />
-                    <span className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-apex-chrome/60">GRID</span>
+                <div className="p-6 md:p-8 group/stat hover:bg-white/[0.02] transition-colors">
+                  <div className="flex items-center gap-2.5 mb-3">
+                    <Users className="w-4 h-4 text-apex-cyan/70" />
+                    <span className="text-[11px] font-semibold uppercase tracking-wider text-white/40">Grid</span>
                   </div>
-                  <p className="font-mono text-sm md:text-base font-bold text-white">{currentSession.drivers.length} <span className="text-apex-chrome/60 text-xs">DRV</span></p>
+                  <p className="text-base md:text-lg font-semibold text-white">{currentSession.drivers.length} Drivers</p>
                 </div>
-                <div className="p-5 md:p-6 group/stat hover:bg-apex-yellow/5 transition-colors">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Flag className="w-4 h-4 text-apex-chrome/60 group-hover/stat:text-apex-yellow transition-colors" />
-                    <span className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-apex-chrome/60">TEAMS</span>
+                <div className="p-6 md:p-8 group/stat hover:bg-white/[0.02] transition-colors">
+                  <div className="flex items-center gap-2.5 mb-3">
+                    <Flag className="w-4 h-4 text-apex-yellow/70" />
+                    <span className="text-[11px] font-semibold uppercase tracking-wider text-white/40">Teams</span>
                   </div>
-                  <p className="font-mono text-sm md:text-base font-bold text-white">{currentSession.teams.length} <span className="text-apex-chrome/60 text-xs">ENT</span></p>
+                  <p className="text-base md:text-lg font-semibold text-white">{currentSession.teams.length} Teams</p>
                 </div>
-                <div className="p-5 md:p-6 group/stat hover:bg-apex-green/5 transition-colors">
-                  <div className="flex items-center gap-2 mb-2">
-                    <TrendingUp className="w-4 h-4 text-apex-chrome/60 group-hover/stat:text-apex-green transition-colors" />
-                    <span className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-apex-chrome/60">LENGTH</span>
+                <div className="p-6 md:p-8 group/stat hover:bg-white/[0.02] transition-colors">
+                  <div className="flex items-center gap-2.5 mb-3">
+                    <TrendingUp className="w-4 h-4 text-apex-green/70" />
+                    <span className="text-[11px] font-semibold uppercase tracking-wider text-white/40">Length</span>
                   </div>
-                  <p className="font-mono text-sm md:text-base font-bold text-white">{(currentSession.track_data.track_length / 1000).toFixed(3)} <span className="text-apex-chrome/60 text-xs">KM</span></p>
+                  <p className="text-base md:text-lg font-semibold text-white">{(currentSession.track_data.track_length / 1000).toFixed(2)} km</p>
                 </div>
               </>
             ) : (
               <>
-                <div className="p-5 md:p-6 group/stat hover:bg-apex-red/5 transition-colors">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Activity className="w-4 h-4 text-apex-chrome/60 group-hover/stat:text-apex-red transition-colors" />
-                    <span className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-apex-chrome/60">TELEMETRY</span>
+                <div className="p-6 md:p-8 group/stat hover:bg-white/[0.02] transition-colors cursor-default">
+                  <div className="flex items-center gap-2.5 mb-3">
+                    <Activity className="w-4 h-4 text-apex-red/70" />
+                    <span className="text-[11px] font-semibold uppercase tracking-wider text-white/40">Telemetry</span>
                   </div>
-                  <p className="font-mono text-sm font-bold text-white">REAL-TIME</p>
+                  <p className="text-base md:text-lg font-semibold text-white">Real-Time Data</p>
                 </div>
-                <div className="p-5 md:p-6 group/stat hover:bg-apex-cyan/5 transition-colors">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Target className="w-4 h-4 text-apex-chrome/60 group-hover/stat:text-apex-cyan transition-colors" />
-                    <span className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-apex-chrome/60">STRATEGY</span>
+                <div className="p-6 md:p-8 group/stat hover:bg-white/[0.02] transition-colors cursor-default">
+                  <div className="flex items-center gap-2.5 mb-3">
+                    <Target className="w-4 h-4 text-apex-cyan/70" />
+                    <span className="text-[11px] font-semibold uppercase tracking-wider text-white/40">Strategy</span>
                   </div>
-                  <p className="font-mono text-sm font-bold text-white">PREDICTIVE</p>
+                  <p className="text-base md:text-lg font-semibold text-white">Pit Prediction</p>
                 </div>
-                <div className="p-5 md:p-6 group/stat hover:bg-apex-yellow/5 transition-colors">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Cloud className="w-4 h-4 text-apex-chrome/60 group-hover/stat:text-apex-yellow transition-colors" />
-                    <span className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-apex-chrome/60">WEATHER</span>
+                <div className="p-6 md:p-8 group/stat hover:bg-white/[0.02] transition-colors cursor-default">
+                  <div className="flex items-center gap-2.5 mb-3">
+                    <Cloud className="w-4 h-4 text-apex-yellow/70" />
+                    <span className="text-[11px] font-semibold uppercase tracking-wider text-white/40">Weather</span>
                   </div>
-                  <p className="font-mono text-sm font-bold text-white">ANALYSIS</p>
+                  <p className="text-base md:text-lg font-semibold text-white">Impact Analysis</p>
                 </div>
-                <div className="p-5 md:p-6 group/stat hover:bg-apex-green/5 transition-colors">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Layers className="w-4 h-4 text-apex-chrome/60 group-hover/stat:text-apex-green transition-colors" />
-                    <span className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-apex-chrome/60">SEGMENTS</span>
+                <div className="p-6 md:p-8 group/stat hover:bg-white/[0.02] transition-colors cursor-default">
+                  <div className="flex items-center gap-2.5 mb-3">
+                    <Layers className="w-4 h-4 text-apex-green/70" />
+                    <span className="text-[11px] font-semibold uppercase tracking-wider text-white/40">Segments</span>
                   </div>
-                  <p className="font-mono text-sm font-bold text-white">MICRO-SEC</p>
+                  <p className="text-base md:text-lg font-semibold text-white">Micro-Sectors</p>
                 </div>
               </>
             )}
@@ -216,22 +216,22 @@ export default function Dashboard() {
                   <div className="w-10 h-10 flex items-center justify-center border border-apex-chrome/30 group-hover:border-opacity-60 transition-colors" style={{ color: module.accentColor }}>
                     <module.icon className="w-5 h-5" />
                   </div>
-                  <span className="font-mono text-[9px] font-bold tracking-[0.2em] text-apex-chrome/40 uppercase">{module.subtitle}</span>
+                  <span className="text-[10px] font-semibold tracking-widest text-apex-chrome/50 uppercase">{module.subtitle}</span>
                 </div>
 
                 {/* Title */}
-                <h3 className="font-display text-xl font-bold text-white mb-3 group-hover:text-opacity-100 transition-colors" style={{ ['--hover-color' as string]: module.accentColor }}>
+                <h3 className="font-display text-xl font-bold text-white mb-3 tracking-wide">
                   {module.title}
                 </h3>
 
-                {/* Description */}
-                <p className="font-mono text-xs text-apex-chrome/70 leading-relaxed mb-6">
+                {/* Description - Using Inter for readable text */}
+                <p className="text-sm text-gray-400 leading-relaxed mb-6">
                   {module.description}
                 </p>
 
                 {/* Action */}
-                <div className="flex items-center gap-2 font-mono text-[10px] font-bold uppercase tracking-[0.2em] opacity-0 group-hover:opacity-100 transition-all duration-300" style={{ color: module.accentColor }}>
-                  <span>ENTER</span>
+                <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-all duration-300" style={{ color: module.accentColor }}>
+                  <span>Enter</span>
                   <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
                 </div>
               </div>

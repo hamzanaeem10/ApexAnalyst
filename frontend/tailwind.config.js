@@ -49,9 +49,9 @@ export default {
       },
       fontFamily: {
         'display': ['Orbitron', 'sans-serif'],
-        'mono': ['JetBrains Mono', 'monospace'],
+        'mono': ['ui-monospace', 'SFMono-Regular', 'monospace'],
         'headline': ['Bebas Neue', 'sans-serif'],
-        'sans': ['JetBrains Mono', 'monospace'], // Monospace as default for data-heavy app
+        'sans': ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
       },
       animation: {
         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',

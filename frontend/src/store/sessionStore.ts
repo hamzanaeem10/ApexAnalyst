@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
 import type { SessionLoadResponse } from '../types';
 
 interface SessionState {
@@ -14,25 +13,18 @@ interface SessionState {
   clearSession: () => void;
 }
 
-export const useSessionStore = create<SessionState>()(
-  persist(
-    (set) => ({
-      currentSession: null,
-      isLoading: false,
-      error: null,
+// No persistence - always start fresh with APEX branding
+// Session only shows after user explicitly loads one
+export const useSessionStore = create<SessionState>()((set) => ({
+  currentSession: null,
+  isLoading: false,
+  error: null,
 
-      setSession: (session) => set({ currentSession: session, error: null }),
-      setLoading: (loading) => set({ isLoading: loading }),
-      setError: (error) => set({ error, isLoading: false }),
-      clearSession: () => set({ currentSession: null, error: null }),
-    }),
-    {
-      name: 'apex-analyst-session',
-      storage: createJSONStorage(() => localStorage),
-      partialize: (state) => ({ currentSession: state.currentSession }), // Only persist the session data
-    }
-  )
-);
+  setSession: (session) => set({ currentSession: session, error: null }),
+  setLoading: (loading) => set({ isLoading: loading }),
+  setError: (error) => set({ error, isLoading: false }),
+  clearSession: () => set({ currentSession: null, error: null }),
+}));
 
 // Selector hooks for optimized re-renders
 export const useCurrentSession = () => useSessionStore((state) => state.currentSession);
